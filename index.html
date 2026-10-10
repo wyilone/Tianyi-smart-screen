@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>天翼智屏 · 产品培训平台</title>
+<style>
+/* ========== Reset ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Noto Sans SC", sans-serif;
+  background: #E8ECF2;
+  color: #1E293B;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+button { font-family: inherit; }
+
+/* ========== 应用外壳（750px 居中） ========== */
+.app-shell {
+  max-width: 750px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #F3F6FA;
+  position: relative;
+  box-shadow: 0 0 24px rgba(15,30,51,0.10);
+  padding-bottom: 76px; /* 底部 tab 高度 */
+}
+
+/* ========== 顶部导航（封面） ========== */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(120deg, #0A2E7A 0%, #1650B0 45%, #2F80F0 100%);
+  color: #ffffff;
+  padding: 16px 20px 13px;
+  overflow: hidden;
+  box-shadow: 0 2px 14px rgba(13,58,143,0.30);
+}
+.topbar::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 100% at 8% -30%, rgba(255,255,255,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 42% 75% at 98% 140%, rgba(255,255,255,0.22) 0%, transparent 52%),
+    radial-gradient(ellipse 30% 50% at 72% 5%, rgba(255,255,255,0.10) 0%, transparent 45%);
+}
+.topbar::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.60) 50%, transparent 100%);
+}
+.tb-deco { position: absolute; pointer-events: none; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); }
+.tb-deco.ring1 { width: 170px; height: 170px; right: -46px; top: -78px; background: rgba(255,255,255,0.06); }
+.tb-deco.ring2 { width: 92px; height: 92px; right: 76px; bottom: -52px; border-color: rgba(255,255,255,0.12); }
+.tb-row1, .tb-row2 { position: relative; z-index: 1; }
+.tb-row1 { display: flex; align-items: center; gap: 12px; }
+.tb-logo {
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  background: linear-gradient(150deg, #ffffff 0%, #E6EEFA 100%);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(9,32,80,0.35), inset 0 1px 0 #ffffff;
+}
+.tb-title { flex: 1; min-width: 0; }
+.tb-badge {
+  display: inline-block;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 2px;
+  color: rgba(255,255,255,0.92);
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.10);
+  border-radius: 9px;
+  padding: 1px 9px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+.tb-title h1 { font-size: 19px; font-weight: 800; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 3px rgba(9,32,80,0.25); }
+.tb-title p { font-size: 12px; color: rgba(255,255,255,0.88); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+.tb-row2 { display: flex; align-items: center; justify-content: space-between; margin-top: 11px; }
+.tb-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.12);
+  color: #ffffff;
+  font-size: 13px;
+  border-radius: 20px;
+  padding: 3px 14px;
+}
+.tb-btn {
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #14489F;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 5px 22px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(9,32,80,0.22);
+}
+.tb-btn:hover { background: #EAF2FD; box-shadow: 0 3px 10px rgba(9,32,80,0.3); }
+
+/* ========== 主内容区 ========== */
+.content { padding: 16px 20px 8px; }
+.page { display: none; }
+.page.active { display: block; animation: fadein 0.25s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ========== 通用卡片 ========== */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 18px 18px 16px;
+  margin-bottom: 14px;
+}
+.sec-title {
+  font-size: 17px; font-weight: 700; color: #1E293B;
+  margin: 4px 0 4px;
+}
+.sec-sub { font-size: 13px; color: #64748B; margin-bottom: 12px; }
+
+/* ========== 筛选 chips ========== */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 12px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  border: 1px solid #E2E8F0;
+  background: #ffffff;
+  color: #475569;
+  font-size: 13px;
+  border-radius: 20px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip.on { background: #1A66E1; border-color: #1A66E1; color: #ffffff; font-weight: 600; }
+.panelbox { display: none; }
+.panelbox.on { display: block; }
+
+/* ========== 知识卡 ========== */
+.kp-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.kp-num {
+  flex-shrink: 0;
+  background: #1650B0; color: #fff;
+  font-size: 11.5px; font-weight: 700;
+  border-radius: 6px; padding: 2px 9px;
+}
+.kp-name { font-size: 15.5px; font-weight: 700; color: #1E293B; flex: 1; }
+.kp-red { color: #E02424; font-weight: 700; }
+.klist { list-style: none; margin: 0 0 10px; }
+.klist li { position: relative; padding-left: 16px; font-size: 13.5px; color: #475569; line-height: 1.7; margin-bottom: 4px; }
+.klist li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: #1A66E1; }
+.klist li b { color: #1E293B; }
+.cmdbar {
+  display: flex; align-items: center; gap: 8px;
+  background: #FFF7F7;
+  border: 1px dashed #E8B4B4;
+  border-left: 3px solid #E02424;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #475569;
+  margin-top: 2px;
+}
+.cmdbar b { color: #1E293B; }
+.pathbar {
+  background: #EFF6FF; border-radius: 8px;
+  padding: 7px 12px; font-size: 12.5px; color: #475569;
+  margin-top: 8px;
+}
+.pathbar b { color: #1A66E1; }
+.aud {
+  display: flex; align-items: center; gap: 8px;
+  background: #EFF6FF; border-radius: 8px;
+  padding: 6px 12px; margin-top: 8px;
+  font-size: 12.5px; color: #1E293B;
+}
+.aud .atag { flex-shrink: 0; background: #1A66E1; color: #fff; font-size: 10.5px; padding: 1px 8px; border-radius: 10px; }
+
+/* 速记表（移动端列表式） */
+.memo-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 9px 0; border-bottom: 1px solid #F1F5F9;
+}
+.memo-item:last-child { border-bottom: none; }
+.memo-id { flex-shrink: 0; background: #EFF6FF; color: #1650B0; font-size: 11px; font-weight: 700; border-radius: 5px; padding: 2px 7px; margin-top: 2px; }
+.memo-body { flex: 1; font-size: 13px; color: #475569; line-height: 1.6; }
+.memo-body b { color: #1E293B; }
+
+/* 易错 */
+.wrong-item { margin-bottom: 10px; }
+.wrong-bad { font-size: 13px; color: #E02424; font-weight: 600; line-height: 1.6; }
+.wrong-bad::before { content: '✗ '; }
+.wrong-good { font-size: 13px; color: #1E293B; line-height: 1.6; margin-top: 2px; }
+.wrong-good::before { content: '✓ '; color: #10B981; font-weight: 700; }
+.wrong-good b { color: #0E9F6E; }
+
+/* ========== 场景问答手风琴 ========== */
+details.qa {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-left: 4px solid #1A66E1;
+}
+details.qa.obj { border-left-color: #E02424; }
+details.qa summary {
+  list-style: none;
+  padding: 13px 16px;
+  font-size: 14px; font-weight: 600; color: #1E293B;
+  cursor: pointer;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa summary .qmark { flex-shrink: 0; background: #64748B; color: #fff; font-size: 10.5px; padding: 2px 8px; border-radius: 10px; margin-top: 2px; }
+details.qa.obj summary .qmark { background: #E02424; }
+details.qa summary .arr { flex-shrink: 0; margin-left: auto; color: #94A3B8; font-size: 12px; transition: transform 0.2s; margin-top: 4px; }
+details.qa[open] summary .arr { transform: rotate(90deg); }
+details.qa .qa-body { padding: 0 16px 14px; }
+.qa-ans { display: flex; gap: 8px; margin-bottom: 8px; }
+.qa-ans .amark { flex-shrink: 0; background: #1A66E1; color: #fff; font-size: 10.5px; padding: 2px 8px; border-radius: 10px; margin-top: 2px; height: fit-content; }
+details.qa.obj .qa-ans .amark { background: #D97706; }
+.qa-ans p { font-size: 13.5px; color: #1E293B; line-height: 1.7; }
+.qa-ans p b { color: #1650B0; }
+.qa-demo { background: #EFF6FF; border-radius: 8px; padding: 7px 11px; font-size: 12.5px; color: #1650B0; margin-bottom: 7px; line-height: 1.65; }
+.qa-close { background: #ECFDF5; border-radius: 8px; padding: 7px 11px; font-size: 12.5px; color: #047857; line-height: 1.65; }
+.pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.pill { background: #EFF6FF; color: #1650B0; border: 1px solid #BFDBFE; border-radius: 20px; padding: 3px 13px; font-size: 12px; font-weight: 600; }
+
+/* ========== 视频脚本 ========== */
+.vhead { display: flex; align-items: center; gap: 10px; margin: 16px 0 10px; }
+.vnum { flex-shrink: 0; background: linear-gradient(135deg, #1650B0, #2176EA); color: #fff; border-radius: 8px; padding: 4px 12px; font-weight: 800; font-size: 14px; }
+.vhead h3 { font-size: 15.5px; font-weight: 700; flex: 1; }
+.vdur { flex-shrink: 0; font-size: 11.5px; color: #1650B0; background: #EFF6FF; border-radius: 12px; padding: 2px 10px; }
+.vnote { font-size: 12.5px; color: #64748B; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 7px 12px; margin-bottom: 10px; line-height: 1.65; }
+.vnote b { color: #E02424; }
+.shot { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #F1F5F9; }
+.shot:last-child { border-bottom: none; }
+.shot-no { flex-shrink: 0; width: 34px; height: 24px; margin-top: 2px; background: #1E293B; color: #fff; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.shot-body { flex: 1; font-size: 12.5px; color: #475569; line-height: 1.65; min-width: 0; }
+.shot-body b { color: #1E293B; }
+.shot-cap { display: inline-block; background: #FFF7ED; color: #C2410C; border-radius: 5px; padding: 1px 8px; font-size: 11.5px; margin-top: 3px; }
+.shot-cap.red { background: #FEF2F2; color: #E02424; font-weight: 700; }
+details.vcard { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 10px; overflow: hidden; }
+details.vcard summary { display: flex; align-items: center; gap: 10px; padding: 12px 15px; cursor: pointer; list-style: none; }
+details.vcard summary::-webkit-details-marker { display: none; }
+details.vcard summary .arr { margin-left: auto; color: #94A3B8; font-size: 12px; transition: transform 0.2s; }
+details.vcard[open] summary .arr { transform: rotate(90deg); }
+details.vcard .vbody { padding: 0 15px 14px; }
+.checklist { list-style: none; margin: 0; }
+.checklist li { position: relative; padding-left: 24px; font-size: 13.5px; color: #1E293B; line-height: 1.7; margin-bottom: 7px; }
+.checklist li::before { content: '☐'; position: absolute; left: 0; top: 0; color: #E02424; font-size: 14px; }
+.checklist li b { color: #E02424; }
+
+/* ========== 登录门 / 密码门卡片 ========== */
+.gate-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 36px 24px 26px;
+  text-align: center;
+  margin: 8vh auto 0;
+  max-width: 420px;
+}
+.gate-icon { width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 14px; background: #F3F6FA; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center; }
+.gate-card h2 { font-size: 18px; color: #1E293B; font-weight: 700; margin-bottom: 8px; }
+.gate-card .gate-desc { font-size: 14px; color: #64748B; margin-bottom: 20px; }
+.gate-input {
+  width: 100%;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  height: 46px;
+  padding: 0 16px;
+  font-size: 15px;
+  color: #1E293B;
+  background: #ffffff;
+  outline: none;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+.gate-input:focus { border-color: #1A66E1; box-shadow: 0 0 0 3px rgba(26,102,225,0.12); }
+.gate-btn {
+  width: 100%;
+  border: none;
+  background: #1A66E1;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  height: 48px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+.gate-btn:hover { background: #1558C4; }
+.gate-btn.green { background: #0E9F6E; }
+.gate-btn.green:hover { background: #059669; }
+.gate-err { display: none; font-size: 13px; color: #E02424; background: #FEF2F2; border-radius: 8px; padding: 7px 12px; margin-bottom: 12px; }
+.gate-err.show { display: block; }
+.gate-tip { font-size: 12px; color: #94A3B8; margin-top: 14px; line-height: 1.7; }
+
+/* ========== 考试 ========== */
+.exam-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.exam-meta .mitem { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 12px 14px; }
+.exam-meta .mitem .mv { font-size: 20px; font-weight: 800; color: #1650B0; }
+.exam-meta .mitem .mv.red { color: #E02424; }
+.exam-meta .mitem .ml { font-size: 12px; color: #64748B; margin-top: 1px; }
+.exam-rules { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 16px; margin-bottom: 14px; }
+.exam-rules h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #1E293B; }
+.exam-rules ul { padding-left: 20px; font-size: 13.5px; color: #475569; line-height: 1.9; }
+
+.q-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.q-prog { flex: 1; height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; }
+.q-prog i { display: block; height: 100%; background: linear-gradient(90deg,#1650B0,#2176EA); border-radius: 3px; transition: width 0.2s; }
+.q-count { font-size: 12.5px; color: #64748B; flex-shrink: 0; }
+.q-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 18px 16px; }
+.q-type { display: inline-block; font-size: 11px; font-weight: 700; color: #1650B0; background: #EFF6FF; border-radius: 5px; padding: 2px 9px; margin-bottom: 10px; }
+.q-text { font-size: 15.5px; font-weight: 600; color: #1E293B; line-height: 1.7; margin-bottom: 14px; }
+.q-opt {
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 11px 13px;
+  margin-bottom: 9px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+  transition: all 0.12s;
+  background: #ffffff;
+}
+.q-opt .okey { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #CBD5E1; color: #64748B; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.q-opt.sel { border-color: #1A66E1; background: #EFF6FF; color: #1650B0; }
+.q-opt.sel .okey { border-color: #1A66E1; background: #1A66E1; color: #fff; }
+.q-nav { display: flex; gap: 10px; margin-top: 14px; }
+.q-nav button {
+  flex: 1; height: 46px; border-radius: 10px; font-size: 15px; cursor: pointer;
+  border: 1.5px solid #E2E8F0; background: #ffffff; color: #334155;
+}
+.q-nav button:disabled { opacity: 0.45; }
+.q-nav button.next { background: #1A66E1; border-color: #1A66E1; color: #fff; font-weight: 600; }
+.q-nav button.submit { background: #0E9F6E; border-color: #0E9F6E; color: #fff; font-weight: 600; }
+.q-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; margin-top: 14px; }
+.q-grid span {
+  height: 30px; border-radius: 7px; background: #F1F5F9; color: #64748B;
+  font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+  border: 1px solid #E2E8F0;
+}
+.q-grid span.done { background: #DBEAFE; color: #1650B0; border-color: #BFDBFE; font-weight: 700; }
+.q-grid span.cur { background: #1A66E1; color: #fff; border-color: #1A66E1; font-weight: 700; }
+
+.score-hero { text-align: center; padding: 26px 16px 20px; }
+.score-ring {
+  width: 128px; height: 128px; margin: 0 auto 14px;
+  border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: conic-gradient(#10B981 var(--p, 0%), #E2E8F0 0);
+}
+.score-ring .inner {
+  width: 104px; height: 104px; border-radius: 50%; background: #ffffff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.score-ring .s-v { font-size: 32px; font-weight: 800; color: #1E293B; line-height: 1.1; }
+.score-ring .s-l { font-size: 11.5px; color: #64748B; }
+.score-badge { display: inline-block; font-size: 14px; font-weight: 700; border-radius: 20px; padding: 5px 20px; }
+.score-badge.pass { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+.score-badge.fail { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+.score-sub { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+.score-sub .ss { background: #F8FAFC; border-radius: 10px; padding: 9px 4px; text-align: center; border: 1px solid #E2E8F0; }
+.score-sub .ss .v { font-size: 15px; font-weight: 800; color: #1650B0; }
+.score-sub .ss .l { font-size: 11px; color: #64748B; }
+.wr-item { border-left: 3px solid #E02424; background: #FEF2F2; border-radius: 8px; padding: 10px 13px; margin-bottom: 10px; }
+.wr-item .wq { font-size: 13.5px; font-weight: 600; color: #1E293B; line-height: 1.6; }
+.wr-item .wa { font-size: 12.5px; color: #B91C1C; margin-top: 5px; }
+.wr-item .wg { font-size: 12.5px; color: #047857; margin-top: 2px; }
+.wr-item .we { font-size: 12px; color: #64748B; margin-top: 5px; line-height: 1.6; }
+
+.hist-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F1F5F9; font-size: 13.5px; }
+.hist-item:last-child { border-bottom: none; }
+.hist-item .hv { font-weight: 800; font-size: 17px; width: 46px; }
+.hist-item .hv.ok { color: #047857; }
+.hist-item .hv.no { color: #B91C1C; }
+.hist-item .hd { color: #64748B; flex: 1; font-size: 12.5px; }
+
+/* ========== 打卡 ========== */
+.ck-sum { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, #1650B0 0%, #2176EA 100%); border-radius: 14px; padding: 18px; color: #fff; margin-bottom: 14px; }
+.ck-sum .cks { width: 64px; height: 64px; border-radius: 50%; background: conic-gradient(#FFFFFF var(--p,0%), rgba(255,255,255,0.25) 0); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ck-sum .cks .in { width: 52px; height: 52px; border-radius: 50%; background: #1B57A6; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; }
+.ck-sum .ckt h3 { font-size: 17px; font-weight: 700; }
+.ck-sum .ckt p { font-size: 12.5px; color: rgba(255,255,255,0.85); margin-top: 3px; line-height: 1.6; }
+.day-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 12px; overflow: hidden; border: 1px solid #E2E8F0; }
+.day-card.done { border-color: #A7F3D0; background: linear-gradient(135deg, #F0FDF9, #FFFFFF); }
+.day-head { display: flex; align-items: center; gap: 10px; padding: 12px 15px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
+.day-card.done .day-head { background: #ECFDF5; }
+.day-tag { flex-shrink: 0; background: #1650B0; color: #fff; font-size: 11.5px; font-weight: 800; border-radius: 6px; padding: 3px 9px; }
+.day-card.done .day-tag { background: #0E9F6E; }
+.day-name { flex: 1; font-size: 14.5px; font-weight: 700; color: #1E293B; }
+.day-badge { flex-shrink: 0; font-size: 11px; font-weight: 700; border-radius: 12px; padding: 2px 10px; background: #F1F5F9; color: #64748B; }
+.day-badge.ok { background: #D1FAE5; color: #047857; }
+.day-body { padding: 12px 15px; }
+.act { display: flex; align-items: center; gap: 10px; padding: 9px 0; }
+.act + .act { border-top: 1px dashed #F1F5F9; }
+.act-mark { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; transition: all 0.15s; }
+.act-mark.ok { background: #0E9F6E; border-color: #0E9F6E; }
+.act-mark:hover { border-color: #0E9F6E; }
+.act-name { flex: 1; font-size: 13.5px; color: #1E293B; }
+.act-name small { display: block; color: #94A3B8; font-size: 11.5px; }
+.act-go {
+  flex-shrink: 0; font-size: 12.5px; color: #1A66E1; background: #EFF6FF;
+  border: 1px solid #BFDBFE; border-radius: 8px; padding: 4px 12px; cursor: pointer;
+}
+.act-go:disabled { opacity: 0.5; }
+.day-done-tip { text-align: center; font-size: 12.5px; color: #047857; font-weight: 600; padding: 4px 0 2px; }
+
+/* ========== 迷你测弹层 ========== */
+.modal-mask {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(15,23,42,0.55);
+  align-items: flex-end; justify-content: center;
+}
+.modal-mask.show { display: flex; }
+.modal {
+  width: 100%; max-width: 750px;
+  background: #ffffff;
+  border-radius: 18px 18px 0 0;
+  max-height: 86vh; overflow-y: auto;
+  padding: 18px 20px 26px;
+}
+.modal .m-title { font-size: 16px; font-weight: 700; color: #1E293B; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.modal .m-sub { font-size: 12.5px; color: #64748B; margin-bottom: 12px; }
+.modal .m-close { margin-left: auto; border: none; background: #F1F5F9; color: #475569; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+
+/* ========== 居中弹窗（登录） ========== */
+.modal-mask.center { align-items: center; }
+.modal-mask.center .modal {
+  width: calc(100% - 56px);
+  max-width: 380px;
+  border-radius: 18px;
+  max-height: 84vh;
+  box-shadow: 0 24px 60px rgba(9,32,80,0.40);
+  animation: popin 0.22s ease;
+}
+@keyframes popin { from { opacity: 0; transform: scale(0.92) translateY(10px); } to { opacity: 1; transform: none; } }
+.modal.login-modal { padding: 26px 24px 20px; text-align: center; position: relative; }
+.login-modal .gate-input { margin-bottom: 10px; }
+.login-modal .gate-btn { margin-top: 4px; }
+.lg-close { position: absolute; top: 12px; right: 12px; border: none; background: #F1F5F9; color: #475569; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.lg-close:hover { background: #E2E8F0; }
+.lg-icon { width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 16px; background: #EFF6FF; border: 1px solid #BFDBFE; display: flex; align-items: center; justify-content: center; }
+.lg-title { font-size: 18px; font-weight: 800; color: #1E293B; }
+.lg-sub { font-size: 12.5px; color: #64748B; margin: 6px 0 16px; line-height: 1.6; }
+.lg-foot { font-size: 11.5px; color: #94A3B8; margin-top: 12px; }
+
+/* ========== 管理看板 ========== */
+.stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat-cell { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 14px 16px; }
+.stat-cell .sv { font-size: 24px; font-weight: 800; color: #1650B0; line-height: 1.2; }
+.stat-cell .sv.green { color: #0E9F6E; }
+.stat-cell .sv.red { color: #E02424; }
+.stat-cell .sl { font-size: 12px; color: #64748B; margin-top: 2px; }
+.stu-table-wrap { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow-x: auto; margin-bottom: 14px; }
+.stutable { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 560px; }
+.stutable th { background: #F1F5F9; color: #1E293B; font-weight: 700; padding: 9px 10px; text-align: left; white-space: nowrap; border-bottom: 1px solid #E2E8F0; }
+.stutable td { padding: 9px 10px; border-bottom: 1px solid #F1F5F9; color: #334155; white-space: nowrap; }
+.stutable tr:last-child td { border-bottom: none; }
+.tag-ok { display: inline-block; background: #D1FAE5; color: #047857; border-radius: 10px; padding: 1px 9px; font-size: 11.5px; font-weight: 700; }
+.tag-no { display: inline-block; background: #FEE2E2; color: #B91C1C; border-radius: 10px; padding: 1px 9px; font-size: 11.5px; font-weight: 700; }
+.adm-empty { text-align: center; color: #94A3B8; font-size: 13px; padding: 26px 0; }
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(20px);
+  background: rgba(15,23,42,0.88); color: #fff; font-size: 13.5px;
+  border-radius: 10px; padding: 9px 18px; z-index: 400;
+  opacity: 0; pointer-events: none; transition: all 0.25s;
+  max-width: 80vw; text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ========== 底部 Tab ========== */
+.tabbar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 750px;
+  background: #ffffff;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+}
+.tab {
+  flex: 1;
+  border: none; background: transparent;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 0 7px;
+  cursor: pointer;
+  color: #475569;
+  font-size: 10.5px;
+}
+.tab svg { width: 22px; height: 22px; }
+.tab.on { color: #1A66E1; font-weight: 700; }
+.tab .lock { font-size: 9px; color: #94A3B8; line-height: 1; margin-top: -1px; }
+
+/* ========== 响应式 ========== */
+@media screen and (max-width: 480px) {
+  .q-grid { grid-template-columns: repeat(7, 1fr); }
+  .exam-meta { grid-template-columns: 1fr 1fr; }
+  .stutable { min-width: 520px; }
+}
+@media screen and (min-width: 751px) {
+  .content { padding: 22px 32px 10px; }
+}
+
+/* ========== 打印 ========== */
+@media print {
+  body { background: #fff; }
+  .tabbar, .topbar, .toast, .modal-mask, .tb-row2 { display: none !important; }
+  .app-shell { box-shadow: none; max-width: 100%; padding-bottom: 0; }
+  .page { display: none !important; }
+  .page.active { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG 图标库 -->
+<svg style="display:none">
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="19" height="13" rx="2.5" fill="none" stroke="#1650B0" stroke-width="2"/><path d="M8 3.5 L12 7 L16 3.5" fill="none" stroke="#E02424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12 L10.5 12 M13.5 12 L17 12 M9 16 L15 16" stroke="#E02424" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5 C6.5 4, 9.5 4, 12 5.5 C14.5 4, 17.5 4, 20 5.5 L20 18.5 C17.5 17, 14.5 17, 12 18.5 C9.5 17, 6.5 17, 4 18.5 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 5.5 L12 18.5" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5 h16 a2 2 0 0 1 2 2 v8 a2 2 0 0 1 -2 2 h-9 l-5 4 v-4 h-2 a2 2 0 0 1 -2 -2 v-8 a2 2 0 0 1 2 -2 z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8.5" cy="11" r="1.3" fill="currentColor"/><circle cx="12.5" cy="11" r="1.3" fill="currentColor"/><circle cx="16.5" cy="11" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3 h8 l4 4 v14 h-12 z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3 v4 h4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 13 L13.5 18 M13.5 13 L8.5 18" stroke="#E02424" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="#0E9F6E" stroke-width="2"/><path d="M8.5 12.3 L11 14.8 L15.8 9.8" fill="none" stroke="#0E9F6E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-clap" viewBox="0 0 24 24"><path d="M3 8 L10 4 L11.5 6.5 L4.5 10.5 Z M6 10.5 L13 6.5 L14.5 9 L7.5 13 Z M9 13 L14.5 9.8 L16 12.2 L11 15.3 C9.8 16 8.2 15.6 7.6 14.4 L7.3 13.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M11 15.5 L18 11.5 L20.5 16 L13.5 20 L11.5 19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4.5 11 L3 14 L6.5 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20 h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="6" y="12" width="3" height="8" rx="1" fill="#1A66E1"/><rect x="11" y="8" width="3" height="12" rx="1" fill="#1A66E1"/><rect x="16" y="4" width="3" height="16" rx="1" fill="#1A66E1"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 L20 6 V11 C20 16 16.5 19.5 12 21 C7.5 19.5 4 16 4 11 V6 Z" fill="#ffffff" stroke="#1E293B" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 9.5 L10 12.5 L10.5 10.5 L12 13 L13 11 L14 13.5 L17 9 L13.5 12.5 L12.5 10.8 L11 13.3 L9.8 11 L9 12.8 Z" fill="#E02424"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#1650B0" stroke-width="2"/><path d="M4.5 20 C6 16.5 8.8 15 12 15 C15.2 15 18 16.5 19.5 20" fill="none" stroke="#1650B0" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-exam" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#1650B0" stroke-width="1.8"/><path d="M9.5 9 C9.5 7.8 10.6 7 12 7 C13.4 7 14.5 7.8 14.5 9 C14.5 10.5 12 10.8 12 12.5" fill="none" stroke="#1650B0" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16" r="1.2" fill="#1650B0"/></symbol>
+</svg>
+
+<div class="app-shell">
+
+  <!-- ===== 顶部导航 ===== -->
+  <header class="topbar">
+    <span class="tb-deco ring1"></span>
+    <span class="tb-deco ring2"></span>
+    <div class="tb-row1">
+      <div class="tb-logo"><svg width="28" height="28"><use href="#i-tv"/></svg></div>
+      <div class="tb-title">
+        <span class="tb-badge">CHINA TELECOM · 天翼智屏</span>
+        <h1>天翼智屏产品培训手册</h1>
+        <p>产品知识 · 营销话术 · 考试 · 打卡 · 视频脚本</p>
+      </div>
+    </div>
+    <div class="tb-row2">
+      <span class="tb-status" id="tbStatus">未登录</span>
+      <button class="tb-btn" id="tbBtnLogin">登录</button>
+    </div>
+  </header>
+
+  <!-- ===== 主内容 ===== -->
+  <main class="content">
+
+    <!-- ============ Tab1 知识手册（免登录） ============ -->
+    <section class="page active" id="page-manual">
+      <div class="chips" id="manualChips">
+        <button class="chip on" data-panel="man-overview">产品总述</button>
+        <button class="chip" data-panel="man-1">01 电话屏</button>
+        <button class="chip" data-panel="man-2">02 电视屏</button>
+        <button class="chip" data-panel="man-3">03 监控屏</button>
+        <button class="chip" data-panel="man-4">04 学习屏</button>
+        <button class="chip" data-panel="man-5">05 健康屏</button>
+        <button class="chip" data-panel="man-memo">速记 · 易错</button>
+      </div>
+
+      <div class="panelbox on" id="pan-man-overview">
+        <div class="card">
+          <h3 class="sec-title">一屏五用 · 智享全家</h3>
+          <p class="sec-sub">天翼智屏不是一台普通电视，而是"五合一"家庭智能屏</p>
+          <ul class="klist">
+            <li><b>电话屏</b>——老人通信管家：移动固话 / 视频通话 / 乡村通讯录 / 紧急呼救</li>
+            <li><b>电视屏</b>——全家高清影院：直播热剧 / 戏曲语音点播</li>
+            <li><b>监控屏</b>——远程看家慧眼：自带监控 / 七天云回看 / 乡村慧眼</li>
+            <li><b>学习屏</b>——孩子家庭教师：同步课堂 / AI 精准学 / 拍照搜题</li>
+            <li><b>健康屏</b>——随身健康档案：血压上传 / 子女远程关注</li>
+          </ul>
+          <div class="aud"><span class="atag">目标人群</span>围绕"一老一小一家庭"三条主线开展营销</div>
+        </div>
+        <div class="card">
+          <h3 class="sec-title">语音指令速查（5 条）</h3>
+          <p class="sec-sub">全部以"小翼管家"唤醒，演示前务必提前试跑</p>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，打电话给孩子。"（K1-1 语音拨号）</span></div>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，救救我。"（K1-4 五方同时呼救）</span></div>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，我要看 CCTV2。"（K2-1 直播切换）</span></div>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，我要看秦腔三滴血。"（K2-2 戏曲点播）</span></div>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，打开天翼学堂。"（K4-1 同步课堂）</span></div>
+        </div>
+      </div>
+
+      <div class="panelbox" id="pan-man-1">
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K1-1</span><span class="kp-name">一家之话 · 移动固话</span></div>
+          <ul class="klist">
+            <li>智屏自带"一家之话"，相当于<b>可移动的固定电话</b></li>
+            <li>打电话全程语音，<b>不用记号码、不碰手机</b>，拿起就喊、喊完就通</li>
+          </ul>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，<b>打电话给孩子</b>。"</span></div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K1-2</span><span class="kp-name">视频通话</span></div>
+          <ul class="klist">
+            <li>点击屏幕"视频通话"即可发起</li>
+            <li>孩子在<b>手机端接受邀请</b>后接通，大屏面对面、看得清</li>
+          </ul>
+          <div class="pathbar"><b>操作路径：</b>屏幕"视频通话" → 手机端接受邀请</div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K1-3</span><span class="kp-name">乡村通讯录</span></div>
+          <ul class="klist">
+            <li>乡村模式下打开"乡村通讯录"</li>
+            <li>可查找<b>村委、村医</b>电话（公共联系渠道）</li>
+          </ul>
+          <div class="pathbar"><b>操作路径：</b>乡村模式 → 乡村通讯录</div>
+        </div>
+        <div class="card" style="border-top:3px solid #E02424;">
+          <div class="kp-head"><span class="kp-num">K1-4</span><span class="kp-name">紧急呼救（重点）</span></div>
+          <ul class="klist">
+            <li>最多同时绑定 <span class="kp-red">5 个紧急联系人</span></li>
+            <li>老人喊出求救指令后，向 5 个绑定号码<span class="kp-red">同时</span>拨出呼救电话</li>
+            <li>一人求救、全家响应；适合独居、行动不便老人</li>
+          </ul>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，<b>救救我</b>。"</span></div>
+          <div class="aud"><span class="atag">考点</span>5 个 · 同时呼出 —— 考试高频，速记页强化</div>
+        </div>
+      </div>
+
+      <div class="panelbox" id="pan-man-2">
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K2-1</span><span class="kp-name">直播 + 热剧</span></div>
+          <ul class="klist">
+            <li>通过内置<b>天翼超高清</b>平台观看直播频道与热门电视剧</li>
+            <li>内容丰富、画质高清</li>
+          </ul>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，<b>我要看 CCTV2</b>。"</span></div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K2-2</span><span class="kp-name">戏曲语音点播</span></div>
+          <ul class="klist">
+            <li>秦腔等戏曲内容支持<b>语音唤醒选曲</b></li>
+            <li>想看哪出点哪出，老人零门槛上手</li>
+          </ul>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，<b>我要看秦腔三滴血</b>。"</span></div>
+        </div>
+      </div>
+
+      <div class="panelbox" id="pan-man-3">
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K3-1</span><span class="kp-name">自带看家监控</span></div>
+          <ul class="klist">
+            <li>智屏<b>前置摄像头</b>自带监控，画面清晰</li>
+            <li>还可<b>绑定家中已有监控</b>，手机随时查看</li>
+          </ul>
+          <div class="pathbar"><b>操作路径：</b>看监控 → 天翼智屏 → 看自己</div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K3-2</span><span class="kp-name">七天云回看</span></div>
+          <ul class="klist">
+            <li>云回看支持最近 <span class="kp-red">7 天</span>录像回放，错过的画面随时补看</li>
+          </ul>
+          <div class="pathbar"><b>操作路径：</b>看监控 → 云回看 → 选择时间</div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K3-3</span><span class="kp-name">乡村慧眼</span></div>
+          <ul class="klist">
+            <li>查看村委共享的<b>公共区域监控</b>（村口村道）</li>
+            <li><b>看不到住户院内</b>——隐私边界，话术必须讲清</li>
+            <li>绑定流程统一口径"稍后发群"</li>
+          </ul>
+          <div class="pathbar"><b>操作路径：</b>乡村模式 → 我的监控 → 乡村慧眼</div>
+        </div>
+      </div>
+
+      <div class="panelbox" id="pan-man-4">
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K4-1</span><span class="kp-name">天翼学堂 · 同步课堂</span></div>
+          <ul class="klist">
+            <li>自由选科目，按孩子情况选<b>年级、课本</b></li>
+            <li><span class="kp-red">每门课第一节课免费</span>，<span class="kp-red">其余功能需开通 VIP</span></li>
+            <li>收费结构必须主动告知（合规红线）</li>
+          </ul>
+          <div class="cmdbar"><span>🎤</span><span>"小翼管家，<b>打开天翼学堂</b>。"</span></div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K4-2</span><span class="kp-name">同步精准学</span></div>
+          <ul class="klist">
+            <li>AI 精准学：把每篇课文<b>拆解成小模块</b>逐块学习</li>
+            <li>家长可据学习记录判断孩子<b>每课薄弱点</b></li>
+          </ul>
+          <div class="pathbar"><b>操作路径：</b>AI 精准学 → 同步精准学</div>
+        </div>
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K4-3</span><span class="kp-name">拍照搜题</span></div>
+          <ul class="klist">
+            <li>不会的题目<b>拍照即出解题讲解</b></li>
+            <li>孩子自主答疑，不必事事等家长</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panelbox" id="pan-man-5">
+        <div class="card">
+          <div class="kp-head"><span class="kp-num">K5-1</span><span class="kp-name">血压上传 + 子女共享</span></div>
+          <ul class="klist">
+            <li>血压计测量数据<b>上传小翼管家</b>，系统内查看历史记录</li>
+            <li>测量要点：绑带须与<span class="kp-red">心脏部位同高</span>，数据才准</li>
+            <li>数据可<b>分享给子女</b>远程关注老人健康</li>
+            <li>演示示例：高压 136 · 低压 101 · 脉搏 86 次/分钟</li>
+          </ul>
+          <div class="aud"><span class="atag">考点</span>绑带与心脏同高 · 数据去向小翼管家</div>
+        </div>
+        <div class="card">
+          <h3 class="sec-title">血压测量演示四步</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li><b>① 准备测量</b>——保持安静放松，坐姿平稳</li>
+            <li><b>② 正确姿势</b>——绑带与心脏部位同高</li>
+            <li><b>③ 自动读数</b>——智屏语音播报血压脉搏</li>
+            <li><b>④ 上传智屏</b>——系统查看历史、分享子女</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panelbox" id="pan-man-memo">
+        <div class="card">
+          <h3 class="sec-title">13 个功能点速记</h3>
+          <p class="sec-sub">红色为考试高频数字考点</p>
+          <div class="memo-item"><span class="memo-id">K1-1</span><span class="memo-body"><b>一家之话</b>：可移动的固定电话，语音拨号不用碰手机</span></div>
+          <div class="memo-item"><span class="memo-id">K1-2</span><span class="memo-body"><b>视频通话</b>：孩子手机端接受邀请，大屏面对面</span></div>
+          <div class="memo-item"><span class="memo-id">K1-3</span><span class="memo-body"><b>乡村通讯录</b>：查<b>村委 / 村医</b>电话</span></div>
+          <div class="memo-item"><span class="memo-id">K1-4</span><span class="memo-body"><b>紧急呼救</b>：<span class="kp-red">5 个紧急联系人 · 同时呼出</span></span></div>
+          <div class="memo-item"><span class="memo-id">K2-1</span><span class="memo-body"><b>直播热剧</b>：天翼超高清平台</span></div>
+          <div class="memo-item"><span class="memo-id">K2-2</span><span class="memo-body"><b>戏曲点播</b>：语音唤醒选曲，零门槛</span></div>
+          <div class="memo-item"><span class="memo-id">K3-1</span><span class="memo-body"><b>自带监控</b>：看监控→天翼智屏→看自己</span></div>
+          <div class="memo-item"><span class="memo-id">K3-2</span><span class="memo-body"><b>云回看</b>：<span class="kp-red">最近 7 天</span>回放</span></div>
+          <div class="memo-item"><span class="memo-id">K3-3</span><span class="memo-body"><b>乡村慧眼</b>：<span class="kp-red">仅村委共享公共区域</span>，看不到住户院内</span></div>
+          <div class="memo-item"><span class="memo-id">K4-1</span><span class="memo-body"><b>同步课堂</b>：<span class="kp-red">第一节课免费 · 其余 VIP</span></span></div>
+          <div class="memo-item"><span class="memo-id">K4-2</span><span class="memo-body"><b>同步精准学</b>：课文拆小模块，薄弱点看得见</span></div>
+          <div class="memo-item"><span class="memo-id">K4-3</span><span class="memo-body"><b>拍照搜题</b>：拍照即解，自主答疑</span></div>
+          <div class="memo-item"><span class="memo-id">K5-1</span><span class="memo-body"><b>血压档案</b>：<span class="kp-red">绑带与心脏同高</span>，上传小翼管家、分享子女</span></div>
+        </div>
+        <div class="card">
+          <h3 class="sec-title">易错点对照（8 条）</h3>
+          <p class="sec-sub">✗ 错误说法 → ✓ 正确说法</p>
+          <div class="wrong-item"><div class="wrong-bad">"呼救可以绑定 3~8 个联系人，轮流畅通。"</div><div class="wrong-good">最多 <b>5 个</b>，且<b>同时</b>呼出，不分先后。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"监控录像想看多久看多久。"</div><div class="wrong-good">云回看仅支持最近 <b>7 天</b>。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"天翼学堂全部免费。"</div><div class="wrong-good">每门课<b>第一节课免费</b>，其余<b>开通 VIP</b>，须主动讲清。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"乡村慧眼连别人家院子都能看。"</div><div class="wrong-good">仅村委共享的<b>公共区域</b>。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"乡村通讯录能查全村每一户电话。"</div><div class="wrong-good">只收录<b>村委、村医</b>公共渠道。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"量血压绑哪儿都一样。"</div><div class="wrong-good">绑带须与<b>心脏同高</b>。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"智屏就是一台智能电视。"</div><div class="wrong-good">一屏五用：电话+电视+监控+学习+健康。</div></div>
+          <div class="wrong-item"><div class="wrong-bad">"现在就帮您把乡村慧眼/血压计绑定好。"</div><div class="wrong-good">统一口径"<b>稍后发群可回看</b>"，不承诺现场办理。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Tab2 营销场景（免登录） ============ -->
+    <section class="page" id="page-scene">
+      <div class="chips" id="sceneChips">
+        <button class="chip on" data-panel="sc-a">A 家有老人</button>
+        <button class="chip" data-panel="sc-b">B 家有孩子</button>
+        <button class="chip" data-panel="sc-c">C 乡镇农村</button>
+        <button class="chip" data-panel="sc-d">D 子女在外</button>
+        <button class="chip" data-panel="sc-h">异议处理</button>
+        <button class="chip" data-panel="sc-rule">话术总则</button>
+      </div>
+
+      <div class="panelbox on" id="pan-sc-a">
+        <div class="pillrow"><span class="pill">电话屏</span><span class="pill">监控屏</span><span class="pill">健康屏</span><span class="pill">戏曲点播</span></div>
+        <details class="qa" open><summary><span class="qmark">客户说</span>"家里老人不会用智能手机，打个电话都费劲。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"那这台正合适——自带'一家之话'，就是一部<b>可移动的固定电话</b>，不用记号码、不用碰手机，喊一声就通。您看——"</p></div><div class="qa-demo">🎤 演示：真机喊"小翼管家，打电话给孩子"</div><div class="qa-close">✓ 促成："给老人配一台，老人省事、您也省心。我帮您登记一台？"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"老人一个人在家，万一摔了碰了怎么办？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"智屏有<b>紧急呼救</b>，能绑 <b>5 个家人手机号</b>。老人喊'救救我'，5 部手机同时接到呼救——一人求救、全家响应。"</p></div><div class="qa-demo">🎤 演示：真机喊"小翼管家，救救我"，让客户手机现场接到来电</div><div class="qa-close">✓ 促成："现场就把 5 个紧急联系人绑好，回家马上能用。"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"白天上班家里没人，老人一个人不放心。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"智屏<b>自带监控</b>，手机随时看老人在家情况；还能<b>回看最近 7 天</b>，一天的活动都有数。"</p></div><div class="qa-demo">🎤 演示：看监控 → 天翼智屏 → 看自己，再展示手机端同步查看</div><div class="qa-close">✓ 促成："人在单位，家情尽收眼底。给您登记一台？"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"老人有高血压，每次量完转身就忘数。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"健康屏就是给老人记血压的——量完<b>数据自动上台账</b>，还能分享到您手机，比口头报数准多了。"</p></div><div class="qa-demo">🎤 演示：血压测量读数（绑带与心脏同高），展示历史记录</div><div class="qa-close">✓ 促成："绑定流程稍后发群里，图文一看就会。今天先把设备定下来？"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"老人爱看秦腔，可不会搜台。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"这个最简单——想看哪出喊哪出，您听——"</p></div><div class="qa-demo">🎤 演示：真机喊"小翼管家，我要看秦腔三滴血"</div><div class="qa-close">✓ 促成："零门槛，老人完全不用学。"</div></div></details>
+      </div>
+
+      <div class="panelbox" id="pan-sc-b">
+        <div class="pillrow"><span class="pill">电视屏</span><span class="pill">学习屏</span></div>
+        <details class="qa" open><summary><span class="qmark">客户说</span>"孩子上小学，我和爱人下班晚，作业辅导不过来。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"天翼学堂<b>跟着课本走</b>，选好年级课本孩子放学自己就能学。<b>每门课第一节课免费</b>，先让孩子试试效果再决定。"</p></div><div class="qa-demo">🎤 演示：喊"打开天翼学堂"，选科目→年级→播放免费首课</div><div class="qa-close">✓ 促成："今晚就能让孩子试听一节。我帮您登记一台？"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"遇到不会的题怎么办？我们下班还得两三个小时。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"两个功能兜底：<b>拍照搜题</b>拍一下就有讲解；<b>同步精准学</b>把课文拆成小模块，孩子的薄弱点您不用猜。"</p></div><div class="qa-demo">🎤 演示：拍照搜题出讲解；AI 精准学→同步精准学看模块拆解</div><div class="qa-close">✓ 促成："相当于请了个不加班的家庭教师。"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"学习内容是不是都要收费？别到时乱扣费。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"把话说明白：<b>每门课第一节课免费</b>，孩子觉得合适再开 VIP，明码标价。不合适看完免费首课就走，不强推。"</p></div><div class="qa-demo">🎤 演示：打开同步课堂，指给客户看"本节课免费"标识</div><div class="qa-close">✓ 促成："您先回去让孩子试，觉得好咱们再开。"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"家里电视刚买，为什么还要这台？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"普通电视只能'看'，这台还能'学'能'办'——同步课堂、AI 精准学普通电视做不到；还能打电话、看监控、记血压。<b>一台顶五样</b>。"</p></div><div class="qa-demo">🎤 演示：快速过学堂 + 打电话两个界面，形成对比</div><div class="qa-close">✓ 促成："与其再买学习机，不如一步到位。"</div></div></details>
+      </div>
+
+      <div class="panelbox" id="pan-sc-c">
+        <div class="pillrow"><span class="pill">乡村通讯录</span><span class="pill">乡村慧眼</span><span class="pill">戏曲点播</span></div>
+        <details class="qa" open><summary><span class="qmark">客户说</span>"我们村里办事就找村委，老人要联系村委还得翻电话本。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"智屏里有<b>乡村通讯录</b>，村委、村医的电话都收录在里面，家里有急事直接屏上找——不用翻本子。"</p></div><div class="qa-demo">🎤 演示：乡村模式 → 乡村通讯录，展示村委/村医条目（号码打码）</div><div class="qa-close">✓ 促成："给老家爸妈配一台，大事小事都找得到人。"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"村里的情况能看看吗？想晓得村口那一带。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"可以看<b>乡村慧眼</b>——村委共享的公共区域监控，村口村道都清楚；别人家里是看不了的，隐私有边界。"</p></div><div class="qa-demo">🎤 演示：乡村模式 → 我的监控 → 乡村慧眼</div><div class="qa-close">✓ 促成："绑定流程我稍后发到村里群里，图文一看就会。"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"买回去爸妈用不来，放家里积灰咋办？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"这台机器<b>全靠喊</b>——看戏喊戏名、打电话喊人名、出事喊救命。现场让老人喊三句，您在旁边看着就会了。"</p></div><div class="qa-demo">🎤 演示：让客户亲手试喊三句指令</div><div class="qa-close">✓ 促成："老人自己会用了，这台才算买值了——现场教学包教包会。"</div></div></details>
+      </div>
+
+      <div class="panelbox" id="pan-sc-d">
+        <div class="pillrow"><span class="pill">视频通话</span><span class="pill">远程看家</span><span class="pill">健康共享</span></div>
+        <details class="qa" open><summary><span class="qmark">客户说</span>"我在外地打工，爸妈在老家，平时啥情况都不晓得。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"三件事替您兜底：<b>视频通话</b>大屏面对面；<b>监控</b>随时看家、回看 7 天；<b>血压数据</b>分享到您手机。人不在身边，关心不断线。"</p></div><div class="qa-demo">🎤 演示：视频通话接通 → 手机端看监控 → 健康数据分享</div><div class="qa-close">✓ 促成："给爸妈配一台，您在外面也踏实。安排寄回老家？"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"给爸妈装这个，他们要学多久才会用？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"一句都不用学——<b>打电话用喊的、求救用喊的、看戏也用喊的</b>，其他都由您手机远程弄好。"</p></div><div class="qa-demo">🎤 演示：三句指令连喊，突出"全语音"</div><div class="qa-close">✓ 促成："您远程设置，爸妈对着电视说话就行。"</div></div></details>
+        <details class="qa"><summary><span class="qmark">客户说</span>"你说的这些功能，我咋知道是真的？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">应答</span><p>"不跟您多说，<b>现场全部演示一遍</b>——打视频、看监控、喊呼救，亲眼看完再决定，咱们电信厅里都是真机。"</p></div><div class="qa-demo">🎤 演示：完整跑视频通话→监控→呼救三大演示</div><div class="qa-close">✓ 促成："眼见为实。觉得行，今天就把安装时间约好。"</div></div></details>
+      </div>
+
+      <div class="panelbox" id="pan-sc-h">
+        <p class="sec-sub">处理原则：不与客户争辩 —— 认同感受 → 化解顾虑 → 引导行动</p>
+        <details class="qa obj" open><summary><span class="qmark">异议</span>"太贵了 / 有优惠吗？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">化解</span><p>"您考虑得实际。算笔账：一台智屏=电视+固话+监控+学习机+健康档案，<b>一台顶五样</b>。资费按营业厅现行政策，我给您算清楚。"</p></div><div class="qa-close">✓ 引导："您主要想先给家里哪位用？我按这个匹配最划算的方式。"</div></div></details>
+        <details class="qa obj"><summary><span class="qmark">异议</span>"家里电视手机都有了，买它干嘛？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">化解</span><p>"电视只能看，手机屏幕小老人看不清学不会。这台是<b>大屏+全语音</b>，补的正是电视和手机的缺口。"</p></div><div class="qa-close">✓ 引导："您家里老人用手机顺不顺？现场试一句就知道了。"</div></div></details>
+        <details class="qa obj"><summary><span class="qmark">异议</span>"老人肯定学不会。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">化解</span><p>"这台机器<b>零学习成本</b>——就三句话：看戏喊戏名、打电话喊人名、救命喊救命。现场教会，学不会算我的。"</p></div><div class="qa-close">✓ 引导："来，让老人家现场喊一句试试？"</div></div></details>
+        <details class="qa obj"><summary><span class="qmark">异议</span>"学习内容到时候乱收费怎么办？"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">化解</span><p>"规则很简单：<b>每门课第一节课免费</b>，继续学才开 VIP，开通前价格写得明明白白，<b>主动权一直在您手里</b>。"</p></div><div class="qa-close">✓ 引导："先试一节免费课，好与不好孩子说了算。"</div></div></details>
+        <details class="qa obj"><summary><span class="qmark">异议</span>"监控这个，感觉隐私不安全。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">化解</span><p>"监控权限只属于您自己家——<b>自己家自己看</b>；乡村慧眼也只有村委共享的<b>公共区域</b>，谁家院里都看不了。"</p></div><div class="qa-close">✓ 引导："绑定解绑都是您手机上自己操作，随时可关。"</div></div></details>
+        <details class="qa obj"><summary><span class="qmark">异议</span>"等需要了再买也不迟。"<span class="arr">›</span></summary><div class="qa-body"><div class="qa-ans"><span class="amark">化解</span><p>"别的都可以等，就老人安全等不起——呼救这种功能，<b>宁可装了用不上，不能要用的时候没有</b>。"</p></div><div class="qa-close">✓ 引导："今天登记，约好上门安装，装好就教会老人。"</div></div></details>
+      </div>
+
+      <div class="panelbox" id="pan-sc-rule">
+        <div class="card">
+          <h3 class="sec-title">话术节奏 · 一问二听三演示四促成</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li><b>一问</b>家庭结构（有老人吗？孩子多大？在外打工吗？）</li>
+            <li><b>二听</b>痛点（不放心 / 辅导难 / 想念）</li>
+            <li><b>三</b>讲对应价值 + 真机<b>演示</b>收尾</li>
+            <li><b>四促成</b>登记或预约上门调试</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top:3px solid #E02424;">
+          <h3 class="sec-title">合规红线（必背）</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li>VIP 收费<b>主动讲清</b>：每门课第一节课免费，其余 VIP</li>
+            <li>不承诺资费外内容，资费一律以现场公示为准</li>
+            <li>乡村慧眼、血压计绑定统一话术"<b>稍后发群</b>"，不承诺现场办理</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Tab3 在线考试（需登录） ============ -->
+    <section class="page" id="page-exam"><div id="examRoot"></div></section>
+
+    <!-- ============ Tab4 每日打卡（需登录） ============ -->
+    <section class="page" id="page-checkin"><div id="ckRoot"></div></section>
+
+    <!-- ============ Tab5 短视频脚本（免登录） ============ -->
+    <section class="page" id="page-video">
+      <div class="chips" id="videoChips">
+        <button class="chip on" data-panel="vd-1">电话屏</button>
+        <button class="chip" data-panel="vd-2">电视屏</button>
+        <button class="chip" data-panel="vd-3">监控屏</button>
+        <button class="chip" data-panel="vd-4">学习屏</button>
+        <button class="chip" data-panel="vd-5">健康屏</button>
+        <button class="chip" data-panel="vd-6">批量拍摄</button>
+      </div>
+
+      <div class="panelbox on" id="pan-vd-1">
+        <div class="card">
+          <h3 class="sec-title">拍摄通用规范</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li>真机演示 · 竖屏 9:16 · 单条 30~60 秒 · 环境安静现场收音</li>
+            <li>关键数字必须上字幕：<b>5 个紧急联系人 / 7 天云回看 / 第一节课免费其余 VIP</b></li>
+            <li>全程不出现资费数字，演示号码一律打码</li>
+            <li>统一落版"中国电信天翼智屏 · 一屏五用智享全家"</li>
+          </ul>
+        </div>
+        <details class="vcard" open><summary><span class="vnum">V01</span><span style="font-weight:700;">语音拨号</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K1-1</b> ｜ 接听方手机提前接通准备，避免冷场</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·智屏亮起｜"家里老人打电话，不用手机。"｜<span class="shot-cap">字幕：电话屏·一家之话</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>中景</b>·店员对屏喊话｜"小翼管家，打电话给孩子。"｜<span class="shot-cap red">指令字幕同步</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·拨号接通界面｜"不用记号码，喊一声就通。"｜<span class="shot-cap">字幕：可移动的固定电话</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>·深蓝底产品图｜（无口播）｜<span class="shot-cap">落版：一屏五用·智享全家</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V02</span><span style="font-weight:700;">视频通话</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K1-2</b> ｜ 两台设备形成"屏对屏"效果</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>中景</b>·点击屏幕"视频通话"｜"想孩子了，点一下就能见。"｜<span class="shot-cap">字幕：视频通话</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·大屏出现孩子画面｜"孩子在手机那头接受邀请——"｜<span class="shot-cap">孩子端手机入镜</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·老人对屏挥手｜"大屏面对面，比手机看得清。"｜<span class="shot-cap">字幕：亲情零距离</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V03</span><span style="font-weight:700;">乡村通讯录</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K1-3</b> ｜ 通讯录条目必须打码或用测试数据</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·乡村模式首页｜"乡下办事，就找村委村医。"｜<span class="shot-cap">字幕：乡村模式</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·通讯录滚动（打码）｜"村委、村医的电话都在里面。"｜<span class="shot-cap red">号码打码</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>中景</b>·手指条目讲解｜"家里有急事，喊一声就找到。"｜<span class="shot-cap">字幕：村委村医一键联系</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V04</span><span style="font-weight:700;">紧急呼救 ★</span><span class="vdur">≈40s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K1-4</b> ｜ 手机 5 部提前飞行模式统一铃声；<b>放最后拍</b>（铃声影响收音）</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>中景</b>·老人独坐沙发｜"万一老人在家出了急事——"｜<span class="shot-cap">字幕：紧急呼救</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·老人对屏喊话｜"小翼管家，救救我。"｜<span class="shot-cap red">指令字幕同步</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·五部手机同框同时响铃（慢动作）｜"绑定的家人手机，同时接到呼救。"｜<span class="shot-cap red">字幕：最多绑定 5 个紧急联系人</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>中景</b>·店员总结｜"一人求救，全家响应。"｜<span class="shot-cap">字幕：同时呼出·全家响应</span></span></div>
+          <div class="shot"><span class="shot-no">镜5</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+      </div>
+
+      <div class="panelbox" id="pan-vd-2">
+        <details class="vcard" open><summary><span class="vnum">V05</span><span style="font-weight:700;">直播热剧</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K2-1</b> ｜ 频道切换过程完整呈现，体现"说了就切"</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>中景</b>·家人围坐｜"直播、热剧，一样不少。"｜<span class="shot-cap">字幕：电视屏·天翼超高清</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·对屏喊话｜"小翼管家，我要看 CCTV2。"｜<span class="shot-cap red">指令字幕同步</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·切到 CCTV2｜"说看什么，就看什么。"｜<span class="shot-cap">字幕：想看什么说一声</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V06</span><span style="font-weight:700;">戏曲点播</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K2-2</b> ｜ "不会搜台→一句话解决"的反差是看点</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>中景</b>·老人拿遥控器犯难｜"老人爱看秦腔，可不会搜台？"｜<span class="shot-cap">字幕：零门槛</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·放下遥控器对屏喊｜"小翼管家，我要看秦腔三滴血。"｜<span class="shot-cap red">指令字幕同步</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·戏曲起，老人展颜｜"想看哪出，喊哪出。"｜<span class="shot-cap">字幕：语音唤醒选曲</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+      </div>
+
+      <div class="panelbox" id="pan-vd-3">
+        <details class="vcard" open><summary><span class="vnum">V07</span><span style="font-weight:700;">自带监控</span><span class="vdur">≈40s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K3-1</b> ｜ 三步路径拍全；手机端需露出 APP 界面</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·点"看监控"｜"出门在外，家里随时看。"｜<span class="shot-cap">路径：看监控→天翼智屏→看自己</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·依次点击路径｜（跟随操作不抢话）｜<span class="shot-cap">路径字幕逐步出现</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·前置摄像头画面｜"画面相当清晰。"｜<span class="shot-cap">字幕：自带看家监控</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>特写</b>·手机 APP 同步查看｜"手机上也能随时看。"｜<span class="shot-cap">APP 界面入镜</span></span></div>
+          <div class="shot"><span class="shot-no">镜5</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V08</span><span style="font-weight:700;">七天云回看</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K3-2</b> ｜ 数字"7 天"必须上大字幕</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·"云回看"入口｜"白天没盯到？倒回去看。"｜<span class="shot-cap">字幕：云回看</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·时间轴拖动回放｜"最近 7 天，随时补看。"｜<span class="shot-cap red">大字幕：最近 7 天</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V09</span><span style="font-weight:700;">乡村慧眼</span><span class="vdur">≈40s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K3-3</b> ｜ 公共区域画面须村委同意出镜；强调隐私边界</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·乡村模式→我的监控｜"村里的情况，也能看。"｜<span class="shot-cap">路径：乡村模式→我的监控→乡村慧眼</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·公共区域画面｜"村委共享的公共区域监控，村口村道都清楚。"｜<span class="shot-cap red">字幕：仅限公共区域</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">落版+字幕：绑定流程详见群通知</span></span></div>
+        </div></details>
+      </div>
+
+      <div class="panelbox" id="pan-vd-4">
+        <details class="vcard" open><summary><span class="vnum">V10</span><span style="font-weight:700;">天翼学堂</span><span class="vdur">≈40s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K4-1</b> ｜ 收费结构字幕为<b>合规硬要求</b></p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·喊话开学堂｜"小翼管家，打开天翼学堂。"｜<span class="shot-cap">字幕：天翼学堂</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·选科目→年级课本｜"跟着课本走，按孩子情况选。"｜<span class="shot-cap">字幕：同步课堂</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·播放课程｜"每门课第一节课，免费看。"｜<span class="shot-cap red">字幕：第一节课免费 · 其余开通 VIP</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V11</span><span style="font-weight:700;">同步精准学</span><span class="vdur">≈40s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K4-2</b> ｜ 重点拍"课文拆模块"界面细节</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·AI精准学→同步精准学｜"课文拆成小模块，哪块没会看哪块。"｜<span class="shot-cap">字幕：AI 精准学</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·模块列表学习记录｜"孩子的薄弱点，家长不用猜。"｜<span class="shot-cap">字幕：薄弱点一目了然</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+        <details class="vcard"><summary><span class="vnum">V12</span><span style="font-weight:700;">拍照搜题</span><span class="vdur">≈30s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K4-3</b> ｜ 作业本不出现真实学生姓名</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>特写</b>·作业本对准屏幕拍摄｜"作业不会做？拍一下。"｜<span class="shot-cap">字幕：拍照搜题</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·逐步给出讲解｜"讲解一步步给，孩子自己就能搞定。"｜<span class="shot-cap">字幕：自主答疑</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">统一落版</span></span></div>
+        </div></details>
+      </div>
+
+      <div class="panelbox" id="pan-vd-5">
+        <details class="vcard" open><summary><span class="vnum">V13</span><span style="font-weight:700;">血压测量全流程</span><span class="vdur">≈50s</span><span class="arr">›</span></summary><div class="vbody"><p class="vnote">对应 <b>K5-1</b> ｜ "绑带与心脏同高"动作必须拍清楚；片尾引导看群通知</p>
+          <div class="shot"><span class="shot-no">镜1</span><span class="shot-body"><b>中景</b>·老人坐稳戴绑带｜"在家量个血压——"｜<span class="shot-cap red">字幕：绑带与心脏同高</span></span></div>
+          <div class="shot"><span class="shot-no">镜2</span><span class="shot-body"><b>特写</b>·智屏语音播报｜"高压 136 毫米汞柱，低压 101，脉搏每分钟 86 次。"｜<span class="shot-cap">字幕：数据自动上台账</span></span></div>
+          <div class="shot"><span class="shot-no">镜3</span><span class="shot-body"><b>特写</b>·手机端查看记录｜"数据直接分享给子女，随时看得到。"｜<span class="shot-cap">字幕：子女远程关注</span></span></div>
+          <div class="shot"><span class="shot-no">镜4</span><span class="shot-body"><b>落版</b>｜（无口播）｜<span class="shot-cap">落版+字幕：绑定流程详见群通知</span></span></div>
+        </div></details>
+      </div>
+
+      <div class="panelbox" id="pan-vd-6">
+        <div class="card">
+          <h3 class="sec-title">场地与道具</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li><b>场地</b>：营业厅体验区或客厅布景，一次布景全天复用</li>
+            <li><b>设备</b>：智屏 1 台（乡村模式提前配好）</li>
+            <li><b>道具</b>：演示手机 <b>5 部</b>、孩子端手机 1 部、血压计 1 台、作业本 1 本（无真实姓名）</li>
+            <li><b>收音</b>：指令现场收音，手机统一飞行模式防来电</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="sec-title">人员分工（4 人）</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li><b>主讲 1 人</b>：工装出镜，口播+操作（V01~V03、V05~V12）</li>
+            <li><b>老人扮演者 1 人</b>：V04 喊呼救 / V06 看戏 / V13 量血压</li>
+            <li><b>孩子端 1 人</b>：V02 手机端接听</li>
+            <li><b>拍摄 1 人</b>：竖屏持稳、喊开始/停、逐条回放确认</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="sec-title">一次拍完 · 推荐顺序</h3>
+          <ul class="klist" style="margin-top:6px;">
+            <li><b>① 布景就位</b>：道具到位，各模式提前点开确认</li>
+            <li><b>② 先拍安静条</b>：V05→V06→V08→V10→V11→V12（对安静度要求最高）</li>
+            <li><b>③ 再拍操作条</b>：V01→V02→V03→V07→V09（节奏慢可重来）</li>
+            <li><b>④ 最后拍干扰条</b>：V04（五机同响）、V13（语音播报）</li>
+            <li><b>⑤ 补空镜落版</b>：特写空镜 + 统一落版素材</li>
+            <li><b>⑥ 逐条质检</b>：按下方清单过一遍，不合格当场重拍</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="sec-title">拍完即检 · 质检清单</h3>
+          <ul class="checklist">
+            <li>语音指令现场清晰可辨，无杂音盖住"小翼管家"</li>
+            <li>关键数字字幕齐全：<b>5 个紧急联系人 / 7 天云回看 / 第一节课免费其余 VIP / 136-101-86</b></li>
+            <li>演示电话号码、通讯录条目<b>全部打码</b></li>
+            <li>画面未出现任何<b>资费数字</b>与资费外承诺</li>
+            <li>乡村慧眼画面为<b>村委同意的公共区域</b></li>
+            <li>13 条落版统一，素材按 V01~V13 命名归档</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Tab6 管理员看板（密码门） ============ -->
+    <section class="page" id="page-admin"><div id="admRoot"></div></section>
+
+  </main>
+
+  <!-- ===== 底部 Tab ===== -->
+  <nav class="tabbar">
+    <button class="tab on" data-page="manual"><svg><use href="#i-book"/></svg><span>知识手册</span></button>
+    <button class="tab" data-page="scene"><svg><use href="#i-chat"/></svg><span>营销场景</span></button>
+    <button class="tab" data-page="exam"><svg><use href="#i-doc"/></svg><span>在线考试</span><span class="lock">🔒登录</span></button>
+    <button class="tab" data-page="checkin"><svg><use href="#i-check"/></svg><span>每日打卡</span><span class="lock">🔒登录</span></button>
+    <button class="tab" data-page="video"><svg><use href="#i-clap"/></svg><span>短视频脚本</span></button>
+    <button class="tab" data-page="admin"><svg><use href="#i-chart"/></svg><span>管理员看板</span><span class="lock">🔒密码</span></button>
+  </nav>
+</div>
+
+<!-- 登录弹层（居中卡片） -->
+<div class="modal-mask center" id="loginMask">
+  <div class="modal login-modal">
+    <button class="lg-close" id="loginClose" type="button">✕</button>
+    <div class="lg-icon"><svg width="32" height="32"><use href="#i-user"/></svg></div>
+    <h3 class="lg-title">员工登录</h3>
+    <p class="lg-sub">首次输入将自动注册 · 考试与打卡数据本机留存</p>
+    <input class="gate-input" id="loginId" type="text" placeholder="工号 / 手机号" maxlength="20">
+    <input class="gate-input" id="loginName" type="text" placeholder="姓名" maxlength="12">
+    <div class="gate-err" id="loginErr">请输入工号/手机号和姓名</div>
+    <button class="gate-btn" id="loginSubmit" type="button">登 录</button>
+    <p class="lg-foot">中国电信 · 天翼智屏渠道培训</p>
+  </div>
+</div>
+
+<!-- 打卡小测弹层 -->
+<div class="modal-mask" id="quizMask">
+  <div class="modal" id="quizBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 数据存储 ================= */
+var STORE_KEY = 'zhiping_train_v1';
+function loadStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e){ return {}; } }
+function saveStore(s){ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+function getSession(){ try { return JSON.parse(sessionStorage.getItem('zp_session')) || null; } catch(e){ return null; } }
+function setSession(v){ v ? sessionStorage.setItem('zp_session', JSON.stringify(v)) : sessionStorage.removeItem('zp_session'); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ================= 题库（35 题） ================= */
+var QSingle = [
+ {q:'天翼智屏"一家之话"功能相当于什么？', o:['一台智能音箱','一部可移动的固定电话','一部对讲机','一台平板电脑'], a:1, k:'K1-1', e:'一家之话=可移动的固定电话，语音操控拨号，不用碰手机。'},
+ {q:'紧急呼救最多可同时绑定几位紧急联系人？', o:['3 位','5 位','8 位','10 位'], a:1, k:'K1-4', e:'最多绑定 5 个紧急联系人，考试高频数字考点。'},
+ {q:'老人喊出求救指令后，智屏如何呼救？', o:['轮流依次拨打','向 5 个绑定号码同时呼出','只发送短信提醒','仅本机响警报声'], a:1, k:'K1-4', e:'5 部手机同时接到呼救电话，一人求救、全家响应。'},
+ {q:'乡村通讯录中可以查找谁的电话？', o:['全村每一户村民','村委和村医','任意手机号归属人','仅村委会主任'], a:1, k:'K1-3', e:'乡村通讯录收录村委、村医等公共联系渠道。'},
+ {q:'看电视直播和热门电视剧，通过智屏内置的哪个平台？', o:['爱奇艺','天翼超高清','腾讯视频','咪咕视频'], a:1, k:'K2-1', e:'电视屏内容通过内置天翼超高清平台观看。'},
+ {q:'云回看支持查看最近几天的录像回放？', o:['3 天','7 天','15 天','30 天'], a:1, k:'K3-2', e:'云回看支持最近 7 天回放。'},
+ {q:'查看智屏自带前置摄像头画面的正确操作路径是？', o:['看监控 → 天翼智屏 → 看自己','我的 → 设备 → 摄像头','乡村模式 → 看监控','设置 → 摄像头开关'], a:0, k:'K3-1', e:'路径：看监控→天翼智屏→看自己。'},
+ {q:'乡村慧眼可以查看什么画面？', o:['任何住户家中','村委共享的公共区域监控','邻居家院子','全村所有摄像头'], a:1, k:'K3-3', e:'仅村委共享的公共区域（村口村道），看不到住户院内。'},
+ {q:'天翼学堂每门课的收费结构是？', o:['全部免费','第一节课免费，其余功能需开通 VIP','前三天免费','全部收费'], a:1, k:'K4-1', e:'第一节课免费、其余 VIP，必须主动讲清（合规红线）。'},
+ {q:'"同步精准学"的核心作用是？', o:['把每篇课文拆解成小模块精准学习','直播名师公开课','在线组卷考试','远程监控孩子上网'], a:0, k:'K4-2', e:'课文拆小模块逐块学，家长可看孩子薄弱点。'},
+ {q:'血压测量时，绑带的正确位置是？', o:['位置随意','与心脏部位同高','高于心脏','低于心脏'], a:1, k:'K5-1', e:'绑带与心脏部位同高，测量数据才准确。'},
+ {q:'血压测量数据上传到哪里统一查看？', o:['微信收藏','小翼管家','云网盘','手机短信'], a:1, k:'K5-1', e:'数据上传小翼管家，系统内查看历史并分享子女。'},
+ {q:'天翼智屏的语音唤醒词是？', o:['"小爱同学"','"小翼管家"','"天猫精灵"','"小度小度"'], a:1, k:'操作', e:'全部语音指令以"小翼管家"唤醒。'},
+ {q:'演示戏曲点播的正确语音指令是？', o:['"小翼管家，我要看秦腔三滴血"','"换台换到戏曲频道"','"播放秦腔"（不带唤醒词）','"打开电视放戏"'], a:0, k:'K2-2', e:'完整指令=唤醒词+剧目名。'},
+ {q:'视频通话如何接通？', o:['大屏拨打后自动接听','孩子在手机端接受邀请后接通','需双方同时喊话','仅限同一 WiFi 下'], a:1, k:'K1-2', e:'手机端接受邀请后接通，大屏面对面。'}
+];
+var QMulti = [
+ {q:'电话屏包含哪些功能？', o:['语音拨号（一家之话）','视频通话','乡村通讯录','紧急呼救'], a:[0,1,2,3], k:'K1', e:'电话屏四大功能：移动固话/视频通话/乡村通讯录/紧急呼救。'},
+ {q:'关于合规红线，下列说法正确的有？', o:['VIP 收费必须主动讲清','可以宣传"全部课程免费"','乡村慧眼绑定流程统一话术"稍后发群"','可以现场承诺即时办理绑定'], a:[0,2], k:'模块二', e:'不得虚假宣传免费、不得承诺现场办理绑定。'},
+ {q:'监控屏包含哪些功能？', o:['自带前置摄像头监控','绑定家中已有监控','七天云回看','乡村慧眼公共区域监控'], a:[0,1,2,3], k:'K3', e:'监控屏四大能力全选。'},
+ {q:'面对客户"太贵了"的异议，正确的应对思路有？', o:['先认同客户感受','直接反驳"不贵"','算一笔账：一台顶五样','引导按"家里谁先用来"匹配方案'], a:[0,2,3], k:'异议H1', e:'先认同→再化解→后引导，不与客户争辩。'},
+ {q:'面向"家长没时间辅导作业"的家庭，学习屏可主推的功能有？', o:['同步课堂（跟着课本走）','同步精准学（薄弱点看得见）','拍照搜题（自主答疑）','电视直播看剧'], a:[0,1,2], k:'K4', e:'看剧不属学习功能。'}
+];
+var QJudge = [
+ {q:'天翼智屏就是一台智能电视，只有看电视一个功能。', a:false, k:'总述', e:'一屏五用：电话+电视+监控+学习+健康。'},
+ {q:'一家之话打电话，需要老人先记住电话号码。', a:false, k:'K1-1', e:'语音喊人名即可，不用记号码。'},
+ {q:'紧急呼救时，五部家人手机是先后轮流接到电话的。', a:false, k:'K1-4', e:'是同时接到呼救电话。'},
+ {q:'乡村通讯录收录的是村委、村医等公共联系渠道。', a:true, k:'K1-3', e:'供家中有急事时联系村委村医。'},
+ {q:'老人想看秦腔，可以用语音直接点播剧目。', a:true, k:'K2-2', e:'语音唤醒选曲，零门槛。'},
+ {q:'云回看可以查看最近 30 天的录像回放。', a:false, k:'K3-2', e:'仅支持最近 7 天。'},
+ {q:'乡村慧眼能看到邻居家院子里的情况。', a:false, k:'K3-3', e:'仅公共区域，住户院内看不到。'},
+ {q:'天翼学堂所有课程都完全免费。', a:false, k:'K4-1', e:'每门课第一节课免费，其余需开通 VIP。'},
+ {q:'血压计绑带与心脏部位同高，测量数据才准确。', a:true, k:'K5-1', e:'测量姿势关键点。'},
+ {q:'拍照搜题功能可对不会的题目拍照后给出解题讲解。', a:true, k:'K4-3', e:'孩子自主答疑。'}
+];
+var QScene = [
+ {q:'【情景】65 岁独居老人，子女常年在外打工，进店咨询。最应优先演示的功能组合是？', o:['紧急呼救 + 看监控 + 视频通话','天翼学堂 + 拍照搜题','戏曲点播 + 云回看','血压上传 + 拍照搜题'], a:0, k:'场景A/D', e:'独居+子女在外=安全+远程关爱优先。'},
+ {q:'【情景】客户说"老人不会搜台，就爱看秦腔"，最合适的现场演示动作是？', o:['教老人用遥控器逐台搜','现场喊"小翼管家，我要看秦腔三滴血"','给老人看纸质节目单','让子女远程帮忙搜好'], a:1, k:'场景C', e:'真机语音点播是最有说服力的演示。'},
+ {q:'【情景】家长担心"学习内容乱收费"，标准应答是？', o:['"绝对不会收费，放心"','"每门课第一节课免费，继续学才开 VIP，主动权在您手里"','"收费很便宜，别担心"','把话题转到其他功能上'], a:1, k:'异议H4', e:'收费结构主动透明讲清，不回避不夸大。'},
+ {q:'【情景】农村客户问"村里的情况能不能看到"，正确的说法是？', o:['能看到任何人家里的情况','只能看村委共享的公共区域，住户院内看不了','必须自家装摄像头才能看','目前看不了'], a:1, k:'场景C/K3-3', e:'公共区域+隐私边界必须讲清。'},
+ {q:'【情景】客户质疑"你说的这些功能是真的吗"，最佳处理方式是？', o:['口头反复保证','现场完整真机演示：打视频、看监控、喊呼救','出示产品说明书','让客户回家自己试试'], a:1, k:'场景D', e:'眼见为实，真机演示最有说服力。'}
+];
+var QUESTIONS = [].concat(
+  QSingle.map(function(x){ return Object.assign({type:'single',score:2,tn:'单选题'},x); }),
+  QMulti.map(function(x){ return Object.assign({type:'multi',score:4,tn:'多选题'},x); }),
+  QJudge.map(function(x){ return Object.assign({type:'judge',score:2,tn:'判断题',o:['正确','错误'],nopti:true},x); }),
+  QScene.map(function(x){ return Object.assign({type:'scene',score:6,tn:'情景应用'},x); })
+);
+var FULL_SCORE = QUESTIONS.reduce(function(s,q){ return s+q.score; },0); /* 100 */
+var PASS_LINE = 80;
+var SECTION_INFO = [['单选题',15,30],['多选题',5,20],['判断题',10,20],['情景应用',5,30]];
+
+/* 每日小测（题库索引） */
+var DAILY_QUIZ = { d1:[0,1,2], d2:[4,13,24], d3:[5,6,25], d4:[8,9,27], d5:[10,11,28], d6:[19,30,32] };
+var DAYS = [
+ {id:'d1', tag:'D1', name:'产品总述 + 电话屏', learn:'manual', learnLabel:'看知识手册', practice:'真机跟喊"打电话给孩子""救救我"', quiz:[0,1,2]},
+ {id:'d2', tag:'D2', name:'电视屏', learn:'manual', learnLabel:'看知识手册', practice:'真机跟喊"看CCTV2""看秦腔三滴血"', quiz:[4,13,24]},
+ {id:'d3', tag:'D3', name:'监控屏', learn:'manual', learnLabel:'看知识手册', practice:'真机走一遍：看监控→天翼智屏→看自己', quiz:[5,6,25]},
+ {id:'d4', tag:'D4', name:'学习屏', learn:'manual', learnLabel:'看知识手册', practice:'真机打开天翼学堂，试一节免费首课', quiz:[8,9,27]},
+ {id:'d5', tag:'D5', name:'健康屏', learn:'manual', learnLabel:'看知识手册', practice:'血压计演示一遍（绑带与心脏同高）', quiz:[10,11,28]},
+ {id:'d6', tag:'D6', name:'话术演练', learn:'scene', learnLabel:'看营销场景',  practice:'对同事完整演练 4 场景 + 6 异议', quiz:[19,32,34]},
+ {id:'d7', tag:'D7', name:'综合考试', learn:'manual', learnLabel:'速记易错页', practice:'把 13 个功能演示流程过一遍', quiz:'exam'}
+];
+
+/* ================= 工具 ================= */
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._tm); t._tm=setTimeout(function(){ t.classList.remove('show'); },2200); }
+function fmtTime(ts){ var d=new Date(ts); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+function getUser(){ var s=getSession(); if(!s) return null; var st=loadStore(); return st.users && st.users[s.id] ? st.users[s.id] : null; }
+function touchUser(){ var s=getSession(); if(!s) return; var st=loadStore(); st.users=st.users||{}; if(!st.users[s.id]){ st.users[s.id]={name:s.name, exams:[], checkins:{}, lastActive:Date.now()}; } else { st.users[s.id].name=s.name; st.users[s.id].lastActive=Date.now(); } saveStore(st); }
+
+/* ================= 登录 ================= */
+function renderLoginState(){
+  var s = getSession();
+  var st = document.getElementById('tbStatus');
+  var btn = document.getElementById('tbBtnLogin');
+  if (s) { st.innerHTML = '👤 ' + esc(s.name); btn.textContent = '退出'; }
+  else { st.textContent = '未登录'; btn.textContent = '登录'; }
+}
+document.getElementById('tbBtnLogin').addEventListener('click', function(){
+  var s = getSession();
+  if (s) { setSession(null); renderLoginState(); renderExam(); renderCheckin(); toast('已退出登录'); return; }
+  openModal('loginMask');
+});
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.getElementById('loginClose').addEventListener('click', function(){ closeModal('loginMask'); });
+document.getElementById('loginSubmit').addEventListener('click', function(){
+  var id = document.getElementById('loginId').value.trim();
+  var name = document.getElementById('loginName').value.trim();
+  var err = document.getElementById('loginErr');
+  if (!id || !name) { err.textContent = '请输入工号/手机号和姓名'; err.classList.add('show'); return; }
+  var st = loadStore(); st.users = st.users || {};
+  if (!st.users[id]) { st.users[id] = { name:name, exams:[], checkins:{}, lastActive:Date.now() }; toast('注册成功，欢迎 ' + name); }
+  else { st.users[id].name = name; st.users[id].lastActive = Date.now(); toast('欢迎回来，' + name); }
+  saveStore(st);
+  setSession({ id:id, name:name });
+  closeModal('loginMask');
+  document.getElementById('loginId').value=''; document.getElementById('loginName').value='';
+  document.getElementById('loginErr').classList.remove('show');
+  renderLoginState(); renderExam(); renderCheckin();
+});
+document.getElementById('loginMask').addEventListener('click', function(e){ if(e.target===this) closeModal('loginMask'); });
+
+/* ================= Tab 路由 ================= */
+var NEED_LOGIN = { exam:1, checkin:1 };
+function switchTab(page){
+  if (NEED_LOGIN[page] && !getSession()) {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    renderGate('examRoot', page==='exam' ? '在线考试' : '每日打卡');
+    openModal('loginMask');
+  }
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', t.getAttribute('data-page')===page); });
+  var target = document.getElementById('page-'+page);
+  if (target) {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    target.classList.add('active');
+  }
+  if (page==='exam') renderExam();
+  if (page==='checkin') renderCheckin();
+  if (page==='admin') renderAdmin();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){ switchTab(t.getAttribute('data-page')); });
+});
+function gotoTab(page){ switchTab(page); }
+
+/* ================= chips 面板切换 ================= */
+function bindChips(chipBarId){
+  var bar = document.getElementById(chipBarId);
+  bar.querySelectorAll('.chip').forEach(function(ch){
+    ch.addEventListener('click', function(){
+      bar.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+      ch.classList.add('on');
+      var pid = ch.getAttribute('data-panel');
+      bar.parentElement.querySelectorAll('.panelbox').forEach(function(p){ p.classList.toggle('on', p.id==='pan-'+pid); });
+    });
+  });
+}
+bindChips('manualChips'); bindChips('sceneChips'); bindChips('videoChips');
+
+/* ================= 登录门渲染 ================= */
+function renderGate(rootId, title){
+  document.getElementById(rootId).innerHTML =
+    '<div class="gate-card">' +
+    '<div class="gate-icon"><svg width="34" height="34"><use href="#i-user"/></svg></div>' +
+    '<h2>' + esc(title) + '</h2>' +
+    '<p class="gate-desc">请先登录员工账号后使用' + esc(title) + '功能</p>' +
+    '<button class="gate-btn" onclick="openModal(\'loginMask\')">登 录</button>' +
+    '<p class="gate-tip">首次输入工号与姓名将自动注册<br>数据保存在本机浏览器</p>' +
+    '</div>';
+}
+
+/* ================= 在线考试 ================= */
+var examState = null;
+function renderExam(){
+  var root = document.getElementById('examRoot');
+  var user = getUser();
+  if (!user) { renderGate('examRoot','在线考试'); return; }
+  if (examState && examState.mode==='result') { renderExamResult(); return; }
+  if (examState && examState.mode==='running') { renderExamQuestion(); return; }
+  /* 首页 */
+  var hist = user.exams || [];
+  var best = hist.length ? Math.max.apply(null, hist.map(function(h){ return h.score; })) : null;
+  var html = '<div class="exam-meta">' +
+    '<div class="mitem"><div class="mv">35</div><div class="ml">题目总数</div></div>' +
+    '<div class="mitem"><div class="mv">' + FULL_SCORE + '</div><div class="ml">卷面满分</div></div>' +
+    '<div class="mitem"><div class="mv red">' + PASS_LINE + '</div><div class="ml">合格线（分）</div></div>' +
+    '<div class="mitem"><div class="mv">' + (best===null?'—':best) + '</div><div class="ml">我的最好成绩</div></div>' +
+    '</div>' +
+    '<div class="exam-rules"><h3>考试规则</h3><ul>' +
+    '<li>题型：单选 15 题×2 分 · 多选 5 题×4 分 · 判断 10 题×2 分 · 情景应用 5 题×6 分</li>' +
+    '<li>多选题漏选、错选均不得分；' + PASS_LINE + ' 分及以上合格</li>' +
+    '<li>交卷即时判分，逐题显示解析与知识点编号</li>' +
+    '<li>不限时长；成绩计入个人培训档案（管理员可见）</li>' +
+    '</ul></div>' +
+    '<button class="gate-btn" id="btnStartExam">开始考试</button>';
+  if (hist.length) {
+    html += '<div class="exam-rules" style="margin-top:14px;"><h3>我的考试记录（' + hist.length + ' 次）</h3>' +
+      hist.slice().reverse().map(function(h){
+        return '<div class="hist-item"><span class="hv ' + (h.pass?'ok':'no') + '">' + h.score + '</span>' +
+          '<span class="hd">' + h.date + '</span><span>' + (h.pass?'<span class="tag-ok">合格</span>':'<span class="tag-no">不合格</span>') + '</span></div>';
+      }).join('') + '</div>';
+  }
+  root.innerHTML = html;
+  document.getElementById('btnStartExam').addEventListener('click', function(){
+    examState = { mode:'running', cur:0, answers:{} };
+    renderExamQuestion();
+  });
+}
+function renderExamQuestion(){
+  var root = document.getElementById('examRoot');
+  var st = examState;
+  var i = st.cur, q = QUESTIONS[i];
+  var done = Object.keys(st.answers).filter(function(k){ return st.answers[k]!==null && st.answers[k]!==undefined; }).length;
+  var answered = st.answers[i];
+  var optsHtml = q.o.map(function(o, oi){
+    var sel = false;
+    if (q.type==='multi') { sel = Array.isArray(answered) && answered.indexOf(oi)>=0; }
+    else { sel = answered===oi; }
+    return '<div class="q-opt' + (sel?' sel':'') + '" data-oi="' + oi + '"><span class="okey">' + 'ABCD'[oi] + '</span><span>' + esc(o) + '</span></div>';
+  }).join('');
+  var pct = Math.round(((i+1)/QUESTIONS.length)*100);
+  root.innerHTML =
+    '<div class="q-top"><span class="q-count">' + (i+1) + ' / ' + QUESTIONS.length + '</span>' +
+    '<div class="q-prog"><i style="width:' + pct + '%"></i></div><span class="q-count">已答 ' + done + ' 题</span></div>' +
+    '<div class="q-card">' +
+    '<span class="q-type">' + q.tn + ' · ' + q.score + ' 分/题</span>' +
+    '<div class="q-text">' + (q.type==='judge' ? '判断：' + esc(q.q) : esc(q.q)) + '</div>' +
+    (q.type==='multi' ? '<p style="font-size:12px;color:#94A3B8;margin:-8px 0 10px;">（多选题：选择所有正确选项）</p>' : '') +
+    optsHtml +
+    '<div class="q-nav">' +
+    '<button id="qPrev"' + (i===0?' disabled':'') + '>上一题</button>' +
+    (i===QUESTIONS.length-1 ? '<button class="submit" id="qSubmit">交 卷</button>' : '<button class="next" id="qNext">下一题</button>') +
+    '</div>' +
+    '<div class="q-grid">' + QUESTIONS.map(function(_, qi){
+      var cls = 'q' + (qi===i?' cur':'') + (st.answers[qi]!==null && st.answers[qi]!==undefined ? ' done':'');
+      return '<span class="' + cls.trim() + '" data-goto="' + qi + '">' + (qi+1) + '</span>';
+    }).join('') + '</div>' +
+    '</div>';
+  root.querySelectorAll('.q-opt').forEach(function(el){
+    el.addEventListener('click', function(){
+      var oi = parseInt(el.getAttribute('data-oi'),10);
+      if (q.type==='multi') {
+        var cur = Array.isArray(st.answers[i]) ? st.answers[i].slice() : [];
+        var pos = cur.indexOf(oi);
+        if (pos>=0) cur.splice(pos,1); else cur.push(oi);
+        st.answers[i] = cur;
+      } else { st.answers[i] = oi; }
+      renderExamQuestion();
+    });
+  });
+  var prev = document.getElementById('qPrev'); if (prev) prev.addEventListener('click', function(){ st.cur--; renderExamQuestion(); });
+  var next = document.getElementById('qNext'); if (next) next.addEventListener('click', function(){ st.cur++; renderExamQuestion(); });
+  var submit = document.getElementById('qSubmit');
+  if (submit) submit.addEventListener('click', function(){
+    var unanswered = QUESTIONS.length - Object.keys(st.answers).filter(function(k){ return st.answers[k]!==null && st.answers[k]!==undefined; }).length;
+    if (unanswered>0 && !confirm('还有 ' + unanswered + ' 题未作答，确定交卷吗？')) return;
+    gradeExam();
+  });
+  root.querySelectorAll('.q-grid span').forEach(function(g){
+    g.addEventListener('click', function(){ st.cur = parseInt(g.getAttribute('data-goto'),10); renderExamQuestion(); });
+  });
+}
+function gradeExam(){
+  var st = examState, wrong = [], secScore = {'single':0,'multi':0,'judge':0,'scene':0}, secFull = {'single':0,'multi':0,'judge':0,'scene':0};
+  var score = 0;
+  QUESTIONS.forEach(function(q, i){
+    secFull[q.type] += q.score;
+    var ans = st.answers[i], ok = false;
+    if (ans!==null && ans!==undefined) {
+      if (q.type==='multi') { ok = Array.isArray(ans) && ans.length===q.a.length && ans.every(function(x){ return q.a.indexOf(x)>=0; }); }
+      else { ok = ans===q.a; }
+    }
+    if (ok) { score += q.score; secScore[q.type] += q.score; }
+    else { wrong.push({ i:i, ans:ans, q:q }); }
+  });
+  var pass = score >= PASS_LINE;
+  var s = getSession(), store = loadStore();
+  store.users = store.users || {}; store.users[s.id] = store.users[s.id] || { name:s.name, exams:[], checkins:{}, lastActive:Date.now() };
+  store.users[s.id].exams = store.users[s.id].exams || [];
+  store.users[s.id].exams.push({ date: fmtTime(Date.now()), score: score, pass: pass });
+  store.users[s.id].lastActive = Date.now();
+  /* D7 联动：考试完成直接勾 D7 的测 */
+  var cks = store.users[s.id].checkins || {};
+  cks.d7 = cks.d7 || {}; cks.d7.quiz = 1; store.users[s.id].checkins = cks;
+  saveStore(store);
+  examState = { mode:'result', score:score, pass:pass, wrong:wrong, secScore:secScore, secFull:secFull };
+  renderExamResult();
+}
+function renderExamResult(){
+  var st = examState, root = document.getElementById('examRoot');
+  var pct = Math.round(st.score/FULL_SCORE*100);
+  var secNames = {'single':'单选题','multi':'多选题','judge':'判断题','scene':'情景应用'};
+  var html = '<div class="card score-hero">' +
+    '<div class="score-ring" style="--p:' + pct + '%"><div class="inner"><span class="s-v">' + st.score + '</span><span class="s-l">满分 ' + FULL_SCORE + '</span></div></div>' +
+    '<span class="score-badge ' + (st.pass?'pass':'fail') + '">' + (st.pass?'🎉 考试合格':'未达合格线 ' + PASS_LINE + ' 分') + '</span>' +
+    '<div class="score-sub">' +
+    ['single','multi','judge','scene'].map(function(t){
+      return '<div class="ss"><div class="v">' + st.secScore[t] + '/' + st.secFull[t] + '</div><div class="l">' + secNames[t] + '</div></div>';
+    }).join('') + '</div>';
+  html += (st.pass
+    ? '<p style="font-size:13px;color:#047857;">成绩已计入培训档案，请继续完成 7 天打卡 →</p>'
+    : '<p style="font-size:13px;color:#B91C1C;">错题已列出解析，复习后点击"再考一次"</p>');
+  html += '<div style="display:flex;gap:10px;margin-top:14px;">' +
+    '<button class="gate-btn" style="flex:1;" onclick="examState=null;renderExam();">返回考试首页</button>' +
+    (st.pass
+      ? '<button class="gate-btn green" style="flex:1;" onclick="gotoTab(\'checkin\')">去打卡</button>'
+      : '<button class="gate-btn green" style="flex:1;" onclick="startRetake()">再考一次</button>') +
+    '</div></div>';
+  if (st.wrong.length) {
+    html += '<div class="card"><h3 class="sec-title">错题解析（' + st.wrong.length + ' 题）</h3><p class="sec-sub">关联知识点编号，回知识手册对应板块复习</p>';
+    st.wrong.forEach(function(w){
+      var userAnsText;
+      if (w.ans===null || w.ans===undefined) userAnsText = '未作答';
+      else if (w.q.type==='multi') userAnsText = w.ans.map(function(x){ return 'ABCD'[x]; }).join('、');
+      else userAnsText = w.q.type==='judge' ? (w.ans===0?'正确':'错误') : 'ABCD'[w.ans];
+      var rightText = w.q.type==='judge' ? (w.q.a?'正确':'错误') : (w.q.type==='multi' ? w.q.a.map(function(x){ return 'ABCD'[x]; }).join('、') : 'ABCD'[w.q.a]);
+      html += '<div class="wr-item"><div class="wq">' + (w.i+1) + '. ' + esc(w.q.q) + '</div>' +
+        '<div class="wa">你的答案：' + userAnsText + '　✗</div>' +
+        '<div class="wg">正确答案：' + rightText + '　[' + w.q.k + ']</div>' +
+        '<div class="we">' + esc(w.q.e) + '</div></div>';
+    });
+    html += '</div>';
+  }
+  root.innerHTML = html;
+}
+function startRetake(){ examState = { mode:'running', cur:0, answers:{} }; renderExamQuestion(); }
+
+/* ================= 每日打卡 ================= */
+function renderCheckin(){
+  var root = document.getElementById('ckRoot');
+  var user = getUser();
+  if (!user) { renderGate('ckRoot','每日打卡'); return; }
+  var cks = user.checkins || {};
+  var doneDays = DAYS.filter(function(d){ var c=cks[d.id]; return c && c.learn && c.practice && c.quiz; }).length;
+  var pct = Math.round(doneDays/7*100);
+  var html = '<div class="ck-sum">' +
+    '<div class="cks" style="--p:' + pct + '%"><div class="in">' + doneDays + '/7</div></div>' +
+    '<div class="ckt"><h3>' + esc(user.name) + ' 的 7 天打卡</h3>' +
+    '<p>' + (doneDays===7 ? '🎉 全部完成，培训结业！' : '每日三动作：学 · 练 · 测 —— 当日事当日毕') + '</p></div></div>';
+  DAYS.forEach(function(d, di){
+    var c = cks[d.id] || {};
+    var full = c.learn && c.practice && c.quiz;
+    var prevDone = di===0 || (function(){ var pc=cks[DAYS[di-1].id]; return pc && pc.learn && pc.practice && pc.quiz; })();
+    var open = full ? '' : (prevDone ? ' open' : '');
+    html += '<details class="day-card' + (full?' done':'') + '"' + open + '>' +
+      '<summary class="day-head" style="cursor:pointer;list-style:none;">' +
+      '<span class="day-tag">' + d.tag + '</span><span class="day-name">' + d.name + '</span>' +
+      '<span class="day-badge' + (full?' ok':'') + '">' + (full?'✓ 已完成':(c.learn||c.practice||c.quiz?'进行中':'待开始')) + '</span>' +
+      '</summary><div class="day-body">' +
+      actHtml(d.id,'learn','学 · 查看' + d.learnLabel, '知识内容 5 分钟', c.learn, 'markCheckin(\'' + d.id + '\',\'learn\');toast(\'学习打卡 +1\');gotoTab(\'' + d.learn + '\');switchManualPanel(\'' + (d.id==='d7'?'man-memo':'man-'+(di+1>5?5:di+1)) + '\')') +
+      actHtml(d.id,'practice','练 · 真机跟做 1 次', d.practice, c.practice, 'donePractice(\'' + d.id + '\')') +
+      (d.quiz==='exam'
+        ? actHtml(d.id,'quiz','测 · 完成综合考试 1 次', '35 题在线考试，' + PASS_LINE + ' 分合格（考完自动打勾）', c.quiz, 'gotoTab(\'exam\')')
+        : actHtml(d.id,'quiz','测 · 今日 3 题小测', '全部答对自动打勾，可反复重做', c.quiz, 'openQuiz(\'' + d.id + '\')')) +
+      (full ? '<div class="day-done-tip">✓ ' + d.tag + ' 打卡完成</div>' : '') +
+      '</div></details>';
+  });
+  html += '<p class="gate-tip" style="text-align:center;">打卡记录保存在本机，管理员看板可查看进度</p>';
+  root.innerHTML = html;
+  root.querySelectorAll('.act-mark').forEach(function(m){
+    m.addEventListener('click', function(){
+      var day = m.getAttribute('data-day'), act = m.getAttribute('data-act');
+      if (m.classList.contains('ok')) return; /* 自动项不可手点 */
+      toast('该动作请通过右侧按钮完成');
+    });
+  });
+}
+function actHtml(day, act, name, sub, done, onclick){
+  var btnLabel = act==='quiz' && onclick.indexOf('openQuiz')>=0 ? '开始小测' : (act==='learn' ? '去学习' : (act==='practice' ? '完成打卡' : '去完成'));
+  return '<div class="act">' +
+    '<span class="act-mark' + (done?' ok':'') + '" data-day="' + day + '" data-act="' + act + '">' + (done?'✓':'') + '</span>' +
+    '<span class="act-name">' + esc(name) + '<small>' + esc(sub) + '</small></span>' +
+    (done ? '<span class="act-go" style="background:#ECFDF5;color:#047857;border-color:#A7F3D0;">已完成</span>'
+          : '<button class="act-go" onclick="' + onclick + '">' + btnLabel + '</button>') +
+    '</div>';
+}
+function donePractice(day){
+  markCheckin(day, 'practice');
+  toast('已完成真机跟练，打卡记录 +1');
+  renderCheckin();
+}
+function switchManualPanel(panelId){
+  var chip = document.querySelector('#manualChips .chip[data-panel="' + panelId.replace('pan-','') + '"]');
+  if (chip) chip.click();
+}
+function markCheckin(day, act){
+  var s = getSession(), st = loadStore();
+  st.users = st.users || {}; st.users[s.id] = st.users[s.id] || { name:s.name, exams:[], checkins:{}, lastActive:Date.now() };
+  st.users[s.id].checkins = st.users[s.id].checkins || {};
+  st.users[s.id].checkins[day] = st.users[s.id].checkins[day] || {};
+  st.users[s.id].checkins[day][act] = 1;
+  st.users[s.id].lastActive = Date.now();
+  saveStore(st);
+}
+/* 小测弹层 */
+var quizState = null;
+function openQuiz(dayId){
+  var d = DAYS.filter(function(x){ return x.id===dayId; })[0];
+  quizState = { day:dayId, qs:d.quiz.map(function(qi){ return { qi:qi, ans:null }; }) };
+  renderQuiz();
+  openModal('quizMask');
+}
+function renderQuiz(){
+  var st = quizState;
+  var doneAll = st.qs.every(function(x){ return x.ans!==null; });
+  var body = document.getElementById('quizBody');
+  var html = '<div class="m-title">📝 今日小测 · ' + st.day.toUpperCase() + '<span class="m-close" onclick="closeModal(\'quizMask\')">✕</span></div>' +
+    '<p class="m-sub">共 3 题，全部答对自动完成当日"测"打卡</p>';
+  st.qs.forEach(function(x, xi){
+    var q = QUESTIONS[x.qi];
+    var sel = x.ans;
+    html += '<div class="q-card" style="margin-bottom:10px;box-shadow:none;border:1px solid #E2E8F0;">' +
+      '<span class="q-type">' + q.tn + '</span><div class="q-text" style="font-size:14px;">' + (xi+1) + '. ' + esc(q.q) + '</div>' +
+      q.o.map(function(o, oi){
+        var cls = 'q-opt';
+        if (sel===oi) cls += (x.correct===undefined ? ' sel' : (oi===q.a ? ' sel' : ' sel'));
+        if (x.correct!==undefined) {
+          if (oi===q.a) cls = 'q-opt sel';
+          else if (sel===oi && oi!==q.a) cls = 'q-opt sel';
+        }
+        return '<div class="' + cls + '" style="padding:8px 11px;font-size:13px;" onclick="pickQuiz(' + xi + ',' + oi + ')"><span class="okey">' + 'ABCD'[oi] + '</span><span>' + esc(o) + '</span></div>';
+      }).join('') + '</div>';
+  });
+  if (doneAll) html += '<div id="quizResult"></div>';
+  html += '<button class="gate-btn" onclick="submitQuiz()">' + (doneAll ? '提交判分' : '请先作答全部 3 题') + '</button>';
+  body.innerHTML = html;
+}
+function pickQuiz(xi, oi){
+  var st = quizState;
+  if (st.qs[xi].correct !== undefined) return; /* 已判分不可改 */
+  st.qs[xi].ans = oi;
+  renderQuiz();
+}
+function submitQuiz(){
+  var st = quizState;
+  var all = st.qs.every(function(x){ return x.ans!==null; });
+  if (!all) { toast('还有题目未作答'); return; }
+  var right = 0;
+  st.qs.forEach(function(x){ var q = QUESTIONS[x.qi]; x.correct = (x.ans===q.a); if (x.correct) right++; });
+  if (right===3) {
+    markCheckin(st.day, 'quiz');
+    renderQuiz();
+    document.getElementById('quizResult').innerHTML = '<div class="qa-close" style="margin-bottom:10px;">✓ 3/3 全对，' + st.day.toUpperCase() + '「测」已完成打卡！</div>';
+    document.querySelector('#quizBody .gate-btn').outerHTML = '<button class="gate-btn green" onclick="closeModal(\'quizMask\');renderCheckin();">完成，回到打卡</button>';
+    toast('小测全对，打卡 +1');
+    renderCheckin();
+  } else {
+    renderQuiz();
+    document.getElementById('quizResult').innerHTML = '<div class="wr-item">答对 ' + right + '/3，未通过。请复习后点击下方按钮重做。</div>';
+    document.querySelector('#quizBody .gate-btn').outerHTML = '<button class="gate-btn" onclick="openQuiz(\'' + st.day + '\')">重做小测</button>';
+  }
+}
+
+/* ================= 管理员看板 ================= */
+var ADM_PASS_KEY = 'zp_admin_pass';
+function getAdminPass(){ var v = localStorage.getItem(ADM_PASS_KEY); return v || 'CX2026'; }
+function renderAdmin(){
+  var root = document.getElementById('admRoot');
+  if (!renderAdmin._authed) {
+    root.innerHTML = '<div class="gate-card">' +
+      '<div class="gate-icon"><svg width="34" height="34"><use href="#i-shield"/></svg></div>' +
+      '<h2>管理员看板</h2>' +
+      '<p class="gate-desc">请输入管理员密码查看全部学员数据</p>' +
+      '<input class="gate-input" id="admPass" type="password" placeholder="管理员密码（默认 CX2026）">' +
+      '<div class="gate-err" id="admErr">密码不正确，请重试</div>' +
+      '<button class="gate-btn" id="admGo">进入看板</button>' +
+      '<p class="gate-tip">默认密码 CX2026，进入看板后可修改<br>数据仅保存在本机浏览器</p>' +
+      '</div>';
+    document.getElementById('admGo').addEventListener('click', function(){
+      var v = document.getElementById('admPass').value;
+      if (v === getAdminPass()) { renderAdmin._authed = true; renderAdmin(); }
+      else { document.getElementById('admErr').classList.add('show'); document.getElementById('admPass').value=''; }
+    });
+    return;
+  }
+  var st = loadStore(); var users = st.users || {};
+  var list = Object.keys(users).map(function(id){ return Object.assign({id:id}, users[id]); });
+  var examUsers = list.filter(function(u){ return u.exams && u.exams.length; });
+  var scores = []; examUsers.forEach(function(u){ u.exams.forEach(function(e){ scores.push(e.score); }); });
+  var avg = scores.length ? Math.round(scores.reduce(function(a,b){ return a+b; },0)/scores.length) : 0;
+  var passCount = examUsers.filter(function(u){ return u.exams.some(function(e){ return e.pass; }); }).length;
+  var fullCk = list.filter(function(u){ return DAYS.every(function(d){ var c=(u.checkins||{})[d.id]; return c && c.learn && c.practice && c.quiz; }); }).length;
+  var html = '<div class="stat-grid">' +
+    '<div class="stat-cell"><div class="sv">' + list.length + '</div><div class="sl">注册学员</div></div>' +
+    '<div class="stat-cell"><div class="sv">' + examUsers.length + '</div><div class="sl">已参加考试</div></div>' +
+    '<div class="stat-cell"><div class="sv green">' + avg + '</div><div class="sl">平均分</div></div>' +
+    '<div class="stat-cell"><div class="sv green">' + (examUsers.length?Math.round(passCount/examUsers.length*100):0) + '%</div><div class="sl">合格率</div></div>' +
+    '<div class="stat-cell"><div class="sv red">' + (scores.length?Math.max.apply(null,scores):'—') + '</div><div class="sl">最高分</div></div>' +
+    '<div class="stat-cell"><div class="sv red">' + fullCk + '</div><div class="sl">7 天全勤</div></div>' +
+    '</div>';
+  if (!list.length) {
+    html += '<div class="card"><div class="adm-empty">暂无学员数据<br><small>学员登录并参加考试/打卡后，数据将在此汇总</small></div></div>';
+  } else {
+    html += '<div class="stu-table-wrap"><table class="stutable"><thead><tr>' +
+      '<th>姓名</th><th>账号</th><th>考试次数</th><th>最高分</th><th>合格</th><th>打卡进度</th><th>最后活跃</th></tr></thead><tbody>';
+    list.sort(function(a,b){ return (b.lastActive||0)-(a.lastActive||0); }).forEach(function(u){
+      var best = u.exams && u.exams.length ? Math.max.apply(null,u.exams.map(function(e){ return e.score; })) : null;
+      var pass = u.exams && u.exams.some(function(e){ return e.pass; });
+      var cksDone = DAYS.filter(function(d){ var c=(u.checkins||{})[d.id]; return c && c.learn && c.practice && c.quiz; }).length;
+      html += '<tr><td><b>' + esc(u.name) + '</b></td><td>' + esc(u.id) + '</td>' +
+        '<td>' + (u.exams?u.exams.length:0) + '</td>' +
+        '<td>' + (best===null?'—':best) + '</td>' +
+        '<td>' + (pass?'<span class="tag-ok">合格</span>':(u.exams&&u.exams.length?'<span class="tag-no">未合格</span>':'—')) + '</td>' +
+        '<td>' + cksDone + '/7</td>' +
+        '<td>' + (u.lastActive?fmtTime(u.lastActive):'—') + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+  html += '<div style="display:flex;gap:10px;">' +
+    '<button class="gate-btn" style="background:#64748B;" onclick="renderAdmin._authed=false;renderAdmin();">退出看板</button>' +
+    '<button class="gate-btn" onclick="var p=prompt(\'设置新的管理员密码：\');if(p){localStorage.setItem(\'' + ADM_PASS_KEY + '\',p);alert(\'密码已更新\');}">修改密码</button>' +
+    '<button class="gate-btn green" onclick="renderAdmin();toast(\'数据已刷新\');">刷新数据</button></div>' +
+    '<p class="gate-tip" style="text-align:center;">考试与打卡数据保存在本机浏览器 localStorage，仅供培训演练使用</p>';
+  root.innerHTML = html;
+}
+
+/* ================= 初始化 ================= */
+renderLoginState();
+renderExam();
+renderCheckin();
+renderAdmin();
+</script>
+</body>
+</html>
