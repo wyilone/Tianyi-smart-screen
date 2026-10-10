@@ -483,6 +483,123 @@ details.vcard .vbody { padding: 0 15px 14px; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ========== 首页 · 产品介绍 ========== */
+.home-hero {
+  position: relative;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0A2E7A 0%, #1650B0 55%, #2F80F0 100%);
+  color: #fff;
+  padding: 22px 18px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(13,58,143,0.28);
+}
+.home-hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 80% at 12% -20%, rgba(255,255,255,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 65% at 95% 115%, rgba(255,255,255,0.18) 0%, transparent 52%);
+}
+.home-badge {
+  position: relative; z-index: 1;
+  display: inline-block;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 2px;
+  color: rgba(255,255,255,0.92);
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.12);
+  border-radius: 9px;
+  padding: 1px 9px;
+}
+.home-hero h2 {
+  position: relative; z-index: 1;
+  font-size: 25px; font-weight: 800; letter-spacing: 3px;
+  margin-top: 8px;
+  text-shadow: 0 2px 6px rgba(9,32,80,0.35);
+}
+.home-hero .home-sub {
+  position: relative; z-index: 1;
+  font-size: 12.5px; color: rgba(255,255,255,0.9);
+  line-height: 1.8; margin-top: 8px;
+}
+.home-device { position: relative; z-index: 1; width: 208px; margin: 18px auto 4px; }
+.dev-screen {
+  width: 208px; height: 126px;
+  background: linear-gradient(140deg, #FFF7E0 0%, #EAF3FC 60%, #DCEBFA 100%);
+  border-radius: 14px;
+  border: 6px solid #F3EDDD;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.30), inset 0 0 0 1px rgba(0,0,0,0.06);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.dev-cam {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  width: 16px; height: 10px;
+  background: #334155; border-radius: 0 0 8px 8px;
+}
+.dev-txt {
+  font-size: 12.5px; font-weight: 700; color: #0A2E6E;
+  letter-spacing: 1px; text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+}
+.dev-base {
+  width: 176px; height: 22px; margin: -3px auto 0;
+  background: linear-gradient(180deg, #F7F2E7 0%, #E7DFCC 100%);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.14);
+}
+.home-sec {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15.5px; font-weight: 800; color: #1E293B;
+  margin: 2px 0 11px;
+}
+.home-sec::before { content: ''; width: 4px; height: 16px; border-radius: 2px; background: #1A66E1; }
+.five-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 16px; }
+.five {
+  background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 13px 13px 11px;
+  border-top: 4px solid #1A66E1;
+  position: relative;
+}
+.five.c-red { border-top-color: #E02424; }
+.five.c-blue { border-top-color: #1A66E1; }
+.five.c-teal { border-top-color: #0E7490; }
+.five.c-green { border-top-color: #0E9F6E; }
+.five.c-purple { border-top-color: #7C3AED; }
+.five.wide { grid-column: 1 / -1; }
+.f-k {
+  position: absolute; top: 10px; right: 12px;
+  background: #F1F5F9; color: #64748B;
+  font-size: 10px; font-weight: 700; border-radius: 5px; padding: 1px 7px;
+}
+.f-title { font-size: 15.5px; font-weight: 800; color: #1E293B; }
+.f-tag { font-size: 11.5px; font-weight: 600; color: #1650B0; margin-top: 1px; }
+.f-txt { font-size: 11.5px; color: #64748B; line-height: 1.55; margin-top: 4px; }
+.aud-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.aud-item { background: #fff; border-radius: 12px; padding: 12px 6px 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.aud-item .a-emoji { font-size: 22px; }
+.aud-item .a-name { font-size: 13.5px; font-weight: 700; margin-top: 4px; color: #1E293B; }
+.aud-item .a-desc { font-size: 11px; color: #64748B; margin-top: 2px; line-height: 1.55; }
+.home-steps { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 14px 16px 10px; margin-bottom: 14px; }
+.home-steps .st { display: flex; gap: 10px; font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 9px; }
+.home-steps .st:last-child { margin-bottom: 0; }
+.home-steps .st b { color: #1E293B; }
+.st-no {
+  flex-shrink: 0; width: 20px; height: 20px; margin-top: 2px;
+  border-radius: 50%; background: #1A66E1; color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.home-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.hbtn {
+  border: none; border-radius: 12px;
+  padding: 12px 6px;
+  font-size: 13.5px; font-weight: 700; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  line-height: 1.4;
+}
+.hbtn.primary { background: linear-gradient(135deg, #1650B0, #2176EA); color: #fff; box-shadow: 0 3px 10px rgba(26,102,225,0.30); }
+.hbtn.light { background: #EFF6FF; color: #1650B0; border: 1px solid #BFDBFE; }
+
 /* ========== 底部 Tab ========== */
 .tabbar {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -566,8 +683,60 @@ details.vcard .vbody { padding: 0 15px 14px; }
   <!-- ===== 主内容 ===== -->
   <main class="content">
 
-    <!-- ============ Tab1 知识手册（免登录） ============ -->
-    <section class="page active" id="page-manual">
+    <!-- ============ Tab1 首页 · 产品介绍 ============ -->
+    <section class="page active" id="page-home">
+      <div class="home-hero">
+        <div class="home-badge">CHINA TELECOM · 天翼智屏</div>
+        <h2>一屏五用 · 智享全家</h2>
+        <p class="home-sub">不是一台普通电视，而是"五合一"家庭智能屏<br>电话 · 电视 · 监控 · 学习 · 健康，一台全搞定</p>
+        <div class="home-device">
+          <div class="dev-screen"><span class="dev-cam"></span><span class="dev-txt">🎤 小翼管家 · 一屏五用</span></div>
+          <div class="dev-base"></div>
+        </div>
+      </div>
+
+      <h3 class="home-sec">五个屏 · 一台智屏</h3>
+      <div class="five-grid">
+        <div class="five c-red"><span class="f-k">K1</span><div class="f-title">📞 电话屏</div><div class="f-tag">老人通信管家</div><div class="f-txt">移动固话 · 视频通话<br>乡村通讯录 · 紧急呼救</div></div>
+        <div class="five c-blue"><span class="f-k">K2</span><div class="f-title">📺 电视屏</div><div class="f-tag">全家高清影院</div><div class="f-txt">直播电视 · 戏曲语音点播</div></div>
+        <div class="five c-teal"><span class="f-k">K3</span><div class="f-title">📷 监控屏</div><div class="f-tag">远程看家慧眼</div><div class="f-txt">自带监控 · 七天云回看<br>乡村慧眼</div></div>
+        <div class="five c-green"><span class="f-k">K4</span><div class="f-title">📚 学习屏</div><div class="f-tag">孩子家庭教师</div><div class="f-txt">同步课堂 · AI 精准学<br>拍照搜题</div></div>
+        <div class="five c-purple wide"><span class="f-k">K5</span><div class="f-title">❤️ 健康屏</div><div class="f-tag">随身健康档案</div><div class="f-txt">血压上传 · 子女远程关注</div></div>
+      </div>
+
+      <h3 class="home-sec">为谁而造 · 核心人群</h3>
+      <div class="aud-grid">
+        <div class="aud-item"><div class="a-emoji">👴</div><div class="a-name">老人</div><div class="a-desc">独居、不会用手机<br>怕孤单、怕失联</div></div>
+        <div class="aud-item"><div class="a-emoji">👧</div><div class="a-name">孩子</div><div class="a-desc">家长忙、作业难<br>不会做</div></div>
+        <div class="aud-item"><div class="a-emoji">🏠</div><div class="a-name">家庭</div><div class="a-desc">子女在外打拼<br>想挂家、陪家人</div></div>
+      </div>
+
+      <h3 class="home-sec">7 天培训怎么走</h3>
+      <div class="home-steps">
+        <div class="st"><span class="st-no">1</span><span><b>看知识手册</b>：五大屏功能要点 + 速记易错</span></div>
+        <div class="st"><span class="st-no">2</span><span><b>学营销话术</b>：4 大场景 + 6 大异议应对</span></div>
+        <div class="st"><span class="st-no">3</span><span><b>每日打卡</b>：真机演练 + 3 题小测，共 7 天</span></div>
+        <div class="st"><span class="st-no">4</span><span><b>在线考试</b>：35 题 100 分，80 分合格</span></div>
+      </div>
+
+      <div class="home-cta">
+        <button class="hbtn primary" onclick="gotoTab('manual')">📖 开始学习<span>知识手册</span></button>
+        <button class="hbtn light" onclick="gotoTab('scene')">💬 营销话术<span>场景与异议</span></button>
+        <button class="hbtn light" onclick="gotoTab('checkin')">✅ 每日打卡<span>7 天任务</span></button>
+        <button class="hbtn light" onclick="gotoTab('exam')">📝 在线考试<span>80 分合格</span></button>
+      </div>
+
+      <div class="card">
+        <h3 class="sec-title">🎤 演示语音速记</h3>
+        <p class="sec-sub">全部指令以"小翼管家"唤醒，演示前务必提前备机</p>
+        <div class="cmdbar"><span>🎤</span><span>"小翼管家，打电话给孩子。"</span></div>
+        <div class="cmdbar"><span>🎤</span><span>"小翼管家，救救我。"</span></div>
+        <div class="cmdbar"><span>🎤</span><span>"小翼管家，我要看秦腔三滴血。"</span></div>
+      </div>
+    </section>
+
+    <!-- ============ Tab2 知识手册（免登录） ============ -->
+    <section class="page" id="page-manual">
       <div class="chips" id="manualChips">
         <button class="chip on" data-panel="man-overview">产品总述</button>
         <button class="chip" data-panel="man-1">01 电话屏</button>
@@ -1001,14 +1170,15 @@ details.vcard .vbody { padding: 0 15px 14px; }
       </div>
     </section>
 
-    <!-- ============ Tab6 管理员看板（密码门） ============ -->
+    <!-- ============ Tab7 管理员看板（密码门） ============ -->
     <section class="page" id="page-admin"><div id="admRoot"></div></section>
 
   </main>
 
   <!-- ===== 底部 Tab ===== -->
   <nav class="tabbar">
-    <button class="tab on" data-page="manual"><svg><use href="#i-book"/></svg><span>知识手册</span></button>
+    <button class="tab on" data-page="home"><svg><use href="#i-tv"/></svg><span>首页</span></button>
+    <button class="tab" data-page="manual"><svg><use href="#i-book"/></svg><span>知识手册</span></button>
     <button class="tab" data-page="scene"><svg><use href="#i-chat"/></svg><span>营销场景</span></button>
     <button class="tab" data-page="exam"><svg><use href="#i-doc"/></svg><span>在线考试</span><span class="lock">🔒登录</span></button>
     <button class="tab" data-page="checkin"><svg><use href="#i-check"/></svg><span>每日打卡</span><span class="lock">🔒登录</span></button>
@@ -1487,23 +1657,32 @@ function submitQuiz(){
 
 /* ================= 管理员看板 ================= */
 var ADM_PASS_KEY = 'zp_admin_pass';
-function getAdminPass(){ var v = localStorage.getItem(ADM_PASS_KEY); return v || 'CX2026'; }
+function getAdminPass(){ return localStorage.getItem(ADM_PASS_KEY); }
 function renderAdmin(){
   var root = document.getElementById('admRoot');
   if (!renderAdmin._authed) {
+    var hasPass = !!getAdminPass();
     root.innerHTML = '<div class="gate-card">' +
       '<div class="gate-icon"><svg width="34" height="34"><use href="#i-shield"/></svg></div>' +
       '<h2>管理员看板</h2>' +
-      '<p class="gate-desc">请输入管理员密码查看全部学员数据</p>' +
-      '<input class="gate-input" id="admPass" type="password" placeholder="管理员密码（默认 CX2026）">' +
-      '<div class="gate-err" id="admErr">密码不正确，请重试</div>' +
-      '<button class="gate-btn" id="admGo">进入看板</button>' +
-      '<p class="gate-tip">默认密码 CX2026，进入看板后可修改<br>数据仅保存在本机浏览器</p>' +
+      '<p class="gate-desc">' + (hasPass ? '查看全部学员培训数据，请输入管理员密码' : '首次使用，请先设置管理员密码') + '</p>' +
+      '<input class="gate-input" id="admPass" type="password" placeholder="' + (hasPass ? '请输入管理员密码' : '设置管理员密码（至少 4 位）') + '">' +
+      '<div class="gate-err" id="admErr">' + (hasPass ? '密码不正确，请重试' : '密码至少 4 位，请重新设置') + '</div>' +
+      '<button class="gate-btn" id="admGo">' + (hasPass ? '进入看板' : '设置并进入') + '</button>' +
+      '<p class="gate-tip">' + (hasPass ? '密码仅保存在本机浏览器<br>忘记密码可清除浏览器数据后重新设置' : '密码仅保存在本机浏览器，请牢记<br>进入看板后可随时修改密码') + '</p>' +
       '</div>';
     document.getElementById('admGo').addEventListener('click', function(){
       var v = document.getElementById('admPass').value;
-      if (v === getAdminPass()) { renderAdmin._authed = true; renderAdmin(); }
-      else { document.getElementById('admErr').classList.add('show'); document.getElementById('admPass').value=''; }
+      if (!hasPass) {
+        if (!v || v.length < 4) { document.getElementById('admErr').classList.add('show'); return; }
+        localStorage.setItem(ADM_PASS_KEY, v);
+        renderAdmin._authed = true;
+        renderAdmin();
+        toast('管理员密码已设置');
+      } else {
+        if (v === getAdminPass()) { renderAdmin._authed = true; renderAdmin(); }
+        else { document.getElementById('admErr').classList.add('show'); document.getElementById('admPass').value=''; }
+      }
     });
     return;
   }
